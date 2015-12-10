@@ -12,4 +12,16 @@ def nice_list(filename)
   end
 end
 
+def new_nice_list(filename)
+  File.open(filename, 'r') do |file|
+    file.each.map do |line|
+      word = line.chomp
+      doubled = !!(/(..).*\1/.match word)
+      spaced_close = !!(/(.).\1/.match word)
+      (doubled and spaced_close) ? 1 : 0
+    end.inject(&:+)
+  end
+end
+
 puts nice_list("input5.txt")
+puts new_nice_list("input5.txt")
