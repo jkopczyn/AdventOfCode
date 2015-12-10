@@ -1,10 +1,19 @@
 require 'byebug'
 def wiring(filename)
-  wire_map = Hash.new { 0 }
+  wire_map = Hash.new
   File.open(filename, 'r') do |file|
-    file.each do |line|
+    queue = file.each.map do |line|
       expression, wire = line.split(" -> ")
-      wire_map[wire.chomp.to_sym] = evaluate_expression(expression, wire_map)
+      tokens = expression.split.map { |str| /^[0-9]*$/.match(str) ? str.to_i : str.to_sym }
+      [wire, tokens]
+    end.sort_by {|pair| pair[1].length}
+    until queue.empty?
+      wire, tokens = queue.dequeue
+      case tokens.length
+      when
+      when
+      when
+      end
     end
   end
   debugger
@@ -36,7 +45,7 @@ rescue Exception => e
 end
 
 def eval_token(token, wire_map)
-  token.is_a?(Integer) ? token : wire_map[token]
+  (token.is_a?(Integer) ? token : wire_map[token]) % 65536
 end
 
 puts wiring("input7.txt")
