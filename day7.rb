@@ -29,9 +29,6 @@ class WiringProblem
       else
         stack.push(wire)
         dependencies.each { |w| stack.push(w) }
-        puts "Stack size: #{stack.length}"
-        #this might end with a wire on the stack multiple times
-        #but line 9 'next if ...' deals with that
       end
     end
     wire_map[:a]
@@ -66,5 +63,9 @@ class WiringProblem
 end
 
 problem = WiringProblem.new("input7.txt", :a)
-puts problem.wiring()
-
+first_soln = problem.wiring()
+puts first_soln
+problem = WiringProblem.new("input7.txt", :a)
+problem.wire_map[:b]=first_soln
+second_soln = problem.wiring()
+puts second_soln
