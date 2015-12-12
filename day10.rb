@@ -7,14 +7,12 @@ def look_and_say_once(start_string)
     if chr == curr_char
       accum += chr
     else
-      #p accum
       next_array.push(accum)
       accum = curr_char = chr
     end
   end
   next_array.push(accum)
   next_string = next_array.map { |run| "#{run.length}#{run[0]}" }.join
-  #p next_array
   next_string
 end
 
@@ -26,7 +24,6 @@ def look_and_say(start_string, iterations=1)
 end
 str = "1321131112"
 
-#p look_and_say_once(str)
 x = look_and_say(str, 40)
 puts x.length
 puts look_and_say(x, 10).length
