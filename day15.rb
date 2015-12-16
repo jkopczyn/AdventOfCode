@@ -2,61 +2,74 @@ require 'byebug'
 require 'matrix'
 require 'rational'
 
-COOKIE_VIRTUES = [:capacity, :durability, :flavor, :texture, :calories]
+COOKIE_VIRTUES = [:capacity, :durability, :flavor, :texture]
+COOKIE_PROPERTIES = [:capacity, :durability, :flavor, :texture, :calories]
 
 def cookie_monster(filename)
+  partial_cookie_monster(filename)[0]
+end
+
+def partial_cookie_monster(filename)
   ingredients = {}
+  calories = {}
   File.open(filename, 'r') do |file|
     file.each do |line|
       regex = /(\w+): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)/
       match = regex.match(line.chomp)
       ingredient = match[1].to_sym
-      ingredients[ingredient] = Hash[COOKIE_VIRTUES.zip(match[2..6].map(&:to_i))]
+      ingredients[ingredient] = Hash[COOKIE_VIRTUES.zip(match[2..5].map(&:to_i))]
+      calories[ingredient] = match[6].to_i
     end
   end
-  size_of_matrix = 8
-  #only works if there are exactly 4 ingredients
-  fm = future_matrix = Array.new(size_of_matrix) { Array.new(size_of_matrix) }
-  fm[4] = [1]*4+[0]*4
-  3.times { |idx| future_matrix[5+idx][4+idx..5+idx] = [1,-1] }
-
-  ingredients.keys.sort.each_with_index do |ing, idx|
-    COOKIE_VIRTUES.each_with_index do |v, j| 
-      fm[j][idx] = ingredients[ing][v] 
+  best_for_virtue = {}
+  recipe = {}
+  total_ounces = 0
+  ingredients.keys.each do |ingredient|
+    recipe[ingredient] = 1
+    total_ounces += 1
+  end
+  until total_ounces >= 100
+    begin
+      recipe[best_choice(recipe, ingredients)] += 1
+      total_ounces += 1
+    rescue Exception => e
+      debugger
+      throw e
     end
   end
-
-  constants = [[0], [0], [0], [0], [100], [0], [0], [0]].each do |row| 
-    row.map! { |el| el ? Rational(el) : Rational(0) }
-  end
-  fm.each { |row| row.map! { |el| el ? Rational(el) : Rational(0) } }
-  m = Matrix::LUPDecomposition.new(Matrix[*fm])
-  b = Matrix[*constants]
-  puts m
-  debugger
-  puts m.solve(b)
-  #g(ca,du,fl,te) = (ca*du*fl*te)
-  #d g/d ca = du*fl*te (+ ca * d g/ d ca (du*fl*te))
-  #ingredients are sprinkles, butterscotch, chocholate, peppermint (not actually)
-  #ca = ca_sp * sp + ca_bu * bu + ca_ch * ch + ca_pe * pe
-  #
-  #  a  b  c  d  m  n  o  p  =  ?
-  #  2  0  0  0 -1  0  0  0     0
-  #  0  5  0 -1  0 -1  0  0     0
-  # -2 -3  5  0  0  0 -1  0     0
-  #  0  0 -1  5  0  0  0 -1     0
-  #  ^ define the VIRTUES values
-  #  1  1  1  1  0  0  0  0   100
-  #  ^ the ingredient constraint
-  #  0  0  0  0  1 -1  0  0     0
-  #  0  0  0  0  0  1 -1  0     0
-  #  0  0  0  0  0  0  1 -1     0
-  #  ^ set them all equal
-  #
-  #
-  #m=2a, n=5b-d, o=-2a-3b+5c, p=-c+5d, a+b+c+d=100, m=n=o=p
- 
+  [total_score(recipe, ingredients), recipe, ingredients, calories]
 end
 
+def best_choice(selection, statistics)
+  selection.keys.sort_by do |ing|
+    potential = selection.dup
+    potential[ing] += 1
+    total_score(potential, statistics)
+  end.last
+end
+
+def virtue_score(virtue, selection, statistics)
+  score = selection.keys.map do |k|
+    selection[k]*statistics[k][virtue]
+  end.inject(&:+)
+  score > 0 ? score : 0
+end
+
+def total_score(selection, statistics)
+  COOKIE_VIRTUES.map { |v| virtue_score(v, selection, statistics) }.inject(&:*)
+end
+
+def total_calories(selection, calorie_map)
+  selection.keys.map {|ing| selection[ing]*calorie_map[ing]}.inject(&:+)
+end
+
+def soylent_monster(filename)
+  total_score, recipe, ingredients, calories = partial_cookie_monster(filename)
+
+  #puts "#{recipe}, #{calories}, #{total_calories(recipe, calories)}"
+end
+
+
+
 puts cookie_monster("input15.txt")
- 
+puts soylent_monster("input15.txt")
