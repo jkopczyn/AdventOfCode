@@ -21,7 +21,6 @@ def partial_cookie_monster(filename)
       calories[ingredient] = match[6].to_i
     end
   end
-  best_for_virtue = {}
   recipe = {}
   total_ounces = 0
   ingredients.keys.each do |ingredient|
@@ -29,18 +28,13 @@ def partial_cookie_monster(filename)
     total_ounces += 1
   end
   until total_ounces >= 100
-    begin
-      recipe[best_choice(recipe, ingredients)] += 1
-      total_ounces += 1
-    rescue Exception => e
-      debugger
-      throw e
-    end
+    recipe[best_addition(recipe, ingredients)] += 1
+    total_ounces += 1
   end
   [total_score(recipe, ingredients), recipe, ingredients, calories]
 end
 
-def best_choice(selection, statistics)
+def best_addition(selection, statistics)
   selection.keys.sort_by do |ing|
     potential = selection.dup
     potential[ing] += 1
@@ -63,13 +57,58 @@ def total_calories(selection, calorie_map)
   selection.keys.map {|ing| selection[ing]*calorie_map[ing]}.inject(&:+)
 end
 
-def soylent_monster(filename)
-  total_score, recipe, ingredients, calories = partial_cookie_monster(filename)
-
-  #puts "#{recipe}, #{calories}, #{total_calories(recipe, calories)}"
+def best_substitution(selection, substitutions, statistics)
+  substitutions.sort_by do |pair|
+    potential = make_substitution(selection.dup, pair)
+    total_score(potential, statistics)
+  end.last
 end
 
+def make_substitution(selection, substitution)
+  put_in, put_out = substitution
+  return selection if selection[put_out] < 1
+  selection[put_in]  += 1
+  selection[put_out] -= 1
+  selection
+end
 
+def soylent_monster(filename)
+  total_score, recipe, ingredients, calories = partial_cookie_monster(filename)
+  decrease_calories = []
+  increase_calories = []
+  stable_calories = []
+  ingredients.keys.permutation(2).each do |pair|
+    put_in, put_out = pair
+    if calories[put_in] > calories[put_out]
+      increase_calories.push(pair)
+    elsif calories[put_in] < calories[put_out]
+      decrease_calories.push(pair)
+    else
+      stable_calories.push(pair)
+    end
+  end
+  cal = total_calories(recipe, calories)
+  until cal == 500
+    #puts "#{recipe}, #{total_calories(recipe, calories)}, #{total_score(recipe, ingredients)}"
+    if cal > 500
+      make_substitution(recipe, 
+        best_substitution(recipe, decrease_calories, ingredients))
+    else
+      make_substitution(recipe, 
+        best_substitution(recipe, increase_calories, ingredients))
+    end
+    cal = total_calories(recipe, calories)
+  end
+  fiddle = best_substitution(recipe, stable_calories, ingredients)
+  trial = make_substitution(recipe.dup, fiddle)
+  while total_score(trial, ingredients) > total_score(recipe, ingredients)
+    recipe = trial
+    fiddle = best_substitution(recipe, stable_calories, ingredients)
+    trial = make_substitution(recipe.dup, fiddle)
+  end
+  #puts "#{recipe}, #{total_calories(recipe, calories)}, #{total_score(recipe, ingredients)}"
+  total_score(recipe, ingredients)
+end
 
 puts cookie_monster("input15.txt")
 puts soylent_monster("input15.txt")
