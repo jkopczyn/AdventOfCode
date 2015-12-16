@@ -17,6 +17,21 @@ def cookie_monster(filename)
   #ingredients are sprinkles, butterscotch, chocholate, peppermint (not actually)
   #ca = ca_sp * sp + ca_bu * bu + ca_ch * ch + ca_pe * (100-sp-bu-ch)
   #dammit multivariable calc is boring
+  #d ca/ d sp = ca_sp - ca_pe
+  #d ca/ d bu = ca_bu - ca_pe
+  #d ca/ d ch = ca_ch - ca_pe
+  #d g/d ca = du*fl*te (+ ca * d g/ d ca (du*fl*te))
+  #g(sp,bu,ch) = (ca_sp*sp+ca_bu*bu+ca_ch*ch+ca_pe*(100-sp-bu-ch))*...
+  #= (ca_pe*100+(ca_sp-ca_pe)sp+(ca_bu-ca_pe)bu+(ca_ch-ca_pe)ch)*...
+  #
+  #so: calculate constants, figure derivatives, set all to zero, solve(?),
+  #approximate if necessary
+  #
+  #g(sp,bu,ch) ~= (C+C*sp+C*bu+C*ch)*(C+C*sp+C*bu+C*ch)*(C+C*sp+C*bu+C*ch)*(C+C*sp+C*bu+C*ch)
+  # ~= (m*sp + C)*(n*sp + D)*(o*sp + E)*(p*sp + F)
+  # = 4mnop + 3(mnoF+mnEp+mDop+Cnop)+2(mnEF+CDop+mDoF+CnEp+mDEp+CnoF)+(CDEp+CDoF+CnEF+mDEF)
+  # = 0
+  # god this is ugly there must be a library for it
 end
 
 puts function("input15.txt")
