@@ -1,4 +1,6 @@
 require 'byebug'
+require 'matrix'
+require 'rational'
 
 COOKIE_VIRTUES = [:capacity, :durability, :flavor, :texture, :calories]
 
@@ -12,27 +14,49 @@ def cookie_monster(filename)
       ingredients[ingredient] = Hash[COOKIE_VIRTUES.zip(match[2..6].map(&:to_i))]
     end
   end
+  size_of_matrix = 8
+  #only works if there are exactly 4 ingredients
+  fm = future_matrix = Array.new(size_of_matrix) { Array.new(size_of_matrix) }
+  fm[4] = [1]*4+[0]*4
+  3.times { |idx| future_matrix[5+idx][4+idx..5+idx] = [1,-1] }
+
+  ingredients.keys.sort.each_with_index do |ing, idx|
+    COOKIE_VIRTUES.each_with_index do |v, j| 
+      fm[j][idx] = ingredients[ing][v] 
+    end
+  end
+
+  constants = [[0], [0], [0], [0], [100], [0], [0], [0]].each do |row| 
+    row.map! { |el| el ? Rational(el) : Rational(0) }
+  end
+  fm.each { |row| row.map! { |el| el ? Rational(el) : Rational(0) } }
+  m = Matrix::LUPDecomposition.new(Matrix[*fm])
+  b = Matrix[*constants]
+  puts m
+  debugger
+  puts m.solve(b)
   #g(ca,du,fl,te) = (ca*du*fl*te)
   #d g/d ca = du*fl*te (+ ca * d g/ d ca (du*fl*te))
   #ingredients are sprinkles, butterscotch, chocholate, peppermint (not actually)
-  #ca = ca_sp * sp + ca_bu * bu + ca_ch * ch + ca_pe * (100-sp-bu-ch)
-  #dammit multivariable calc is boring
-  #d ca/ d sp = ca_sp - ca_pe
-  #d ca/ d bu = ca_bu - ca_pe
-  #d ca/ d ch = ca_ch - ca_pe
-  #d g/d ca = du*fl*te (+ ca * d g/ d ca (du*fl*te))
-  #g(sp,bu,ch) = (ca_sp*sp+ca_bu*bu+ca_ch*ch+ca_pe*(100-sp-bu-ch))*...
-  #= (ca_pe*100+(ca_sp-ca_pe)sp+(ca_bu-ca_pe)bu+(ca_ch-ca_pe)ch)*...
+  #ca = ca_sp * sp + ca_bu * bu + ca_ch * ch + ca_pe * pe
   #
-  #so: calculate constants, figure derivatives, set all to zero, solve(?),
-  #approximate if necessary
+  #  a  b  c  d  m  n  o  p  =  ?
+  #  2  0  0  0 -1  0  0  0     0
+  #  0  5  0 -1  0 -1  0  0     0
+  # -2 -3  5  0  0  0 -1  0     0
+  #  0  0 -1  5  0  0  0 -1     0
+  #  ^ define the VIRTUES values
+  #  1  1  1  1  0  0  0  0   100
+  #  ^ the ingredient constraint
+  #  0  0  0  0  1 -1  0  0     0
+  #  0  0  0  0  0  1 -1  0     0
+  #  0  0  0  0  0  0  1 -1     0
+  #  ^ set them all equal
   #
-  #g(sp,bu,ch) ~= (C+C*sp+C*bu+C*ch)*(C+C*sp+C*bu+C*ch)*(C+C*sp+C*bu+C*ch)*(C+C*sp+C*bu+C*ch)
-  # ~= (m*sp + C)*(n*sp + D)*(o*sp + E)*(p*sp + F)
-  # = 4mnop + 3(mnoF+mnEp+mDop+Cnop)+2(mnEF+CDop+mDoF+CnEp+mDEp+CnoF)+(CDEp+CDoF+CnEF+mDEF)
-  # = 0
-  # god this is ugly there must be a library for it
+  #
+  #m=2a, n=5b-d, o=-2a-3b+5c, p=-c+5d, a+b+c+d=100, m=n=o=p
+ 
 end
 
-puts function("input15.txt")
+puts cookie_monster("input15.txt")
  
