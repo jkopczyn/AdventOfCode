@@ -8,7 +8,7 @@ def find_sue(filename, clue_list)
       aunts.push(Aunt.parse(line))
     end
   end
-  aunts = aunts.select { |aunt| aunt.fuzzy_compare(target_aunt) }
+  aunts = aunts.select { |aunt| target_aunt.fuzzy_compare(aunt) }
   p aunts
   puts aunts.map {|a| a.number }
 end
@@ -49,10 +49,18 @@ class Aunt
   end
 
   def fuzzy_compare(other)
-    [:children, :cats, :samoyeds, :pomeranians, :akitas, :vizslas, :goldfish,
-     :trees, :cars, :perfumes].all? do |attribute|
+    [:children, :samoyeds, :akitas,
+     :vizslas, :cars, :perfumes].all? do |attribute|
       self.send(attribute).nil? or other.send(attribute).nil? or
         self.send(attribute) == other.send(attribute)
+    end and
+    [:cats, :trees].all? do |attribute| 
+      self.send(attribute).nil? or other.send(attribute).nil? or
+        self.send(attribute) < other.send(attribute)
+    end and
+    [:pomeranians, :goldfish].all? do |attribute|
+      self.send(attribute).nil? or other.send(attribute).nil? or
+        self.send(attribute) > other.send(attribute)
     end
   end
 end
