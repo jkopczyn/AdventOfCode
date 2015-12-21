@@ -3,6 +3,7 @@ require 'set'
 
 def replace_medicine(filename)
   conversions = Hash.new {|h, k| h[k] = [] }
+  medicine = nil
   File.open(filename, 'r') do |file|
     file.each do |line|
       if line.strip!.empty?
@@ -17,17 +18,16 @@ def replace_medicine(filename)
   end
   results = Set.new()
   conversions.keys.each do |k|
-    idx = 0
-    while idx < medicine.length
-      match_idx = medicine.find(k,idx)
+    idx = medicine.index(k,0)
+    while idx and idx < medicine.length
       conversions[k].each do |v|
-        results << "#{medicine[0...match_idx]}#{v}#{medicine[match_idx+1..-1]}"
+        results << "#{medicine[0...idx]}#{v.strip}#{medicine[(idx+k.length)..-1]}".strip
       end
-      idx = match_idx + 1
+      idx = medicine.index(k,idx+1)
     end
   end
   results.count
 end
 
-puts replace_medicines("input19.txt")
+puts replace_medicine("input19.txt")
  
