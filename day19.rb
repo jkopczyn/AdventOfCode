@@ -45,51 +45,29 @@ def shorten_medicine(filename, goal)
       end
     end
   end
-  #alright let's do some A*
-  #heuristic is length difference/max drop
+  working = medicine.dup
+  key_lengths = {}
+  conversions.keys.each { |k| key_lengths[k] = k.gsub(/[a-z]/,'').length }
+  keys = conversions.keys.sort!{|k| key_lengths[k] }
 
-  @heuristic_factor = conversions.map {|k,v| k.length - v.length }.max
-  def heuristic(string)
-    string.gsub(/[a-z]/,'').length / (1.0*@heuristic_factor)
-  end
-  interior = Set.new()
-  frontier = Set.new([medicine])
-  distance_from_start = Hash.new{|h,k| h[k] = 1.0/0.0 }
-  distance_from_start[medicine] = 0 
-  total_distance_estimate = Hash.new{|h,k| h[k] = 1.0/0.0 }
-  total_distance_estimate[medicine] = heuristic(medicine)
-
-  until frontier.empty?
-    point = frontier.min_by {|str| heuristic(str) }
-    puts "closest is #{heuristic(point)}, size of frontier #{frontier.count} #{point if point.length < 20}"
-    if point == goal
-      return distance_from_start[point]
-    end
-    frontier.delete(point)
-    interior.add(point)
-    for k in conversions.keys
-      v = conversions[k]
-      idx = point.index(k,0)
-      while idx and idx < point.length
-        neighbor = "#{point[0...idx]}#{v}#{point[(idx+k.length)..-1]}"
-        if interior.include?(neighbor)
-          idx = point.index(k,idx+1)
-          next
-        elsif not frontier.include?(neighbor)
-          frontier.add(neighbor)
-        elsif (distance_from_start[point]+1) >= distance_from_start[neighbor]
-          idx = point.index(k,idx+1)
-          next
-        else 
-          distance_from_start[neighbor] = distance_from_start[point] + 1
-          total_distance_estimate[neighbor] = 
-            distance_from_start[neighbor] + heuristic(neighbor)
-          idx = point.index(k,idx+1)
-        end
+  count = 0
+  while working.length > 1 do
+    dummy = working.dup
+    keys.each do |key|
+      while working.sub!(key, conversions[key])
+        count += 1 
+        puts "#{working}, #{key}, #{conversions[key]}"
       end
     end
+    puts "check for stale"
+    puts dummy, working
+    if dummy == working
+      keys.shuffle!
+      working = medicine.dup
+      count = 0
+    end
   end
-  return nil
+  count
 end
 
 
