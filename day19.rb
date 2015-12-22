@@ -50,7 +50,7 @@ def shorten_medicine(filename, goal)
 
   @heuristic_factor = conversions.map {|k,v| k.length - v.length }.max
   def heuristic(string)
-    (string.gsub(/[a-z]/,'').length / @heuristic_factor)+1
+    string.gsub(/[a-z]/,'').length / (1.0*@heuristic_factor)
   end
   interior = Set.new()
   frontier = Set.new([medicine])
@@ -61,6 +61,7 @@ def shorten_medicine(filename, goal)
 
   until frontier.empty?
     point = frontier.min_by {|str| heuristic(str) }
+    puts "closest is #{heuristic(point)}, size of frontier #{frontier.count} #{point if point.length < 20}"
     if point == goal
       return distance_from_start[point]
     end
