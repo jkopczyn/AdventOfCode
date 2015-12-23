@@ -3,7 +3,7 @@ require 'byebug'
 BOSS = {hits: 58, damage: 9}
 class Fight_State
   attr_reader :mana
-attr_accessor :mana_spent, :player_hits, :boss_hits, :boss_damage, :poison_turns, :shield_turns, :recharge_turns
+attr_accessor :mana_spent, :player_hits, :boss_hits, :boss_damage, :poison_turns, :shield_turns, :recharge_turns, :hard_mode
 
   def initialize(options={})
     @mana= options[:mana] || 500
@@ -14,6 +14,7 @@ attr_accessor :mana_spent, :player_hits, :boss_hits, :boss_damage, :poison_turns
     @poison_turns= options[:poison_turns] || 0
     @shield_turns= options[:shield_turns] || 0
     @recharge_turns= options[:recharge_turns] || 0
+    @hard_mode= options[:hard_mode] || false
   end
 
   def mana=(n)
@@ -33,11 +34,15 @@ attr_accessor :mana_spent, :player_hits, :boss_hits, :boss_damage, :poison_turns
     options[:poison_turns] = poison_turns
     options[:shield_turns] = shield_turns
     options[:recharge_turns] = recharge_turns
-    #debugger
+    options[:hard_mode] = hard_mode
     options
   end
 
   def evolve(action)
+    if self.hard_mode
+      self.player_hits -= 1
+      return :loss if self.player_hits <= 0
+    end
     if self.recharge_turns > 0
       self.mana += 101
       self.recharge_turns -= 1
@@ -92,8 +97,8 @@ attr_accessor :mana_spent, :player_hits, :boss_hits, :boss_damage, :poison_turns
   end
 end
 
-def wizard_fighting()
-  timelines = [Fight_State.new]
+def wizard_fighting(hard=false)
+  timelines = [Fight_State.new({hard_mode: hard})]
   finished_fights = []
   lowest_cost = 999999
   count = 0
@@ -125,4 +130,5 @@ def wizard_fighting()
 end
 
 puts wizard_fighting()
+puts wizard_fighting(true)
  
