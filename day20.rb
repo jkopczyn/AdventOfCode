@@ -1,40 +1,25 @@
 require 'byebug'
+require 'prime'
 
-def function(target)
+
+def factors_of(number)
+  return [1] if number == 1
+  primes, powers = number.prime_division.transpose
+  exponents = powers.map{|i| (0..i).to_a}
+  divisors = exponents.shift.product(*exponents).map do |powers|
+    primes.zip(powers).map{|prime, power| prime ** power}.inject(:*)
+  end
+  divisors
+end
+
+def sum_factors(target)
   numbers = {0 => nil}
   max = target/10
   1.upto(max) do |n|
-    numbers[n] = recursive(n, numbers)
-    puts "#{n}: #{numbers[n]}" if n%1000 == 0
-    if numbers[n] >= max
-      return n
-    end
+    tot = factors_of(n).inject(&:+)
+    puts "#{n}, #{tot}" if n%144 == 0
+    return n if tot >= max
   end
 end
 
-def recursive(n, memo)
-  idx = 1
-  total = 0
-  while true
-    step_back = n - (3*idx*idx - idx)/2
-    if step_back == 0
-      return memo[n] = total + (1 == idx%2 ? n : -1*n)
-    elsif step_back < 0
-      return memo[n] = total
-    end
-    if idx % 2 == 1
-      total += (memo[step_back] or memo[step_back]= recursive(step_back, memo))
-    else
-      total -= (memo[step_back] or memo[step_back]= recursive(step_back, memo))
-    end
-    if idx < 0
-      idx = -1*idx + 1
-    else
-      idx = -1*idx
-    end
-  end
-end
-
-puts function(310)
-puts function(33100000)
- 
+puts sum_factors(33100000)
