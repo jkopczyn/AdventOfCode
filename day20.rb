@@ -1,7 +1,6 @@
 require 'byebug'
 require 'prime'
 
-
 def factors_of(number)
   return [1] if number == 1
   primes, powers = number.prime_division.transpose
