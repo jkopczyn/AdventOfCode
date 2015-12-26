@@ -29,7 +29,12 @@ def print_grid(height, width)
   rows.each { |row| p row }
 end
 
-puts "#{row = 3}, #{column = 4}, #{secret_grid(row, column)}"
+puts "#{row = 1}, #{column = 1}, #{secret_grid(row, column)}"
+puts "#{row = 1}, #{column = 2}, #{secret_grid(row, column)}"
+puts "#{row = 2}, #{column = 1}, #{secret_grid(row, column)}"
+puts "#{row = 3}, #{column = 1}, #{secret_grid(row, column)}"
+puts "#{row = 2}, #{column = 2}, #{secret_grid(row, column)}"
+puts "#{row = 4}, #{column = 1}, #{secret_grid(row, column)}"
 #puts "#{row = 3}, #{column = 4}, #{secret_grid(row, column)}"
 #puts "#{row = 4}, #{column = 3}, #{secret_grid(row, column)}"
 #puts "#{row = 5}, #{column = 1}, #{secret_grid(row, column)}"
