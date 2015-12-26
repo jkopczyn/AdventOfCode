@@ -1,8 +1,9 @@
 require 'byebug'
 def secret_grid(row, column)
   idx = (column*(column+1)/2) + ((row-1)*(2*column + row - 2))/2
-  base = 20151125 
-  curr = 1
+  idx -= 1
+  base = 252533
+  curr = 20151125 
   while idx > 0
     if idx % 2 == 0
       idx /= 2
@@ -14,7 +15,6 @@ def secret_grid(row, column)
     end
   end
   curr
-  #nxt = ((curr % 33554393) * 252533) %
 end
 
 def print_grid(height, width)
@@ -29,12 +29,11 @@ def print_grid(height, width)
   rows.each { |row| p row }
 end
 
-puts "#{row = 1}, #{column = 1}, #{secret_grid(row, column)}"
-puts "#{row = 1}, #{column = 2}, #{secret_grid(row, column)}"
-puts "#{row = 2}, #{column = 1}, #{secret_grid(row, column)}"
-puts "#{row = 3}, #{column = 1}, #{secret_grid(row, column)}"
-puts "#{row = 2}, #{column = 2}, #{secret_grid(row, column)}"
-puts "#{row = 4}, #{column = 1}, #{secret_grid(row, column)}"
+#puts "#{row = 1}, #{column = 1}, #{secret_grid(row, column)}"
+#puts "#{row = 2}, #{column = 1}, #{secret_grid(row, column)}"
+#puts "#{row = 1}, #{column = 2}, #{secret_grid(row, column)}"
+#puts "#{row = 3}, #{column = 1}, #{secret_grid(row, column)}"
+#puts "#{row = 2}, #{column = 2}, #{secret_grid(row, column)}"
 #puts "#{row = 3}, #{column = 4}, #{secret_grid(row, column)}"
 #puts "#{row = 4}, #{column = 3}, #{secret_grid(row, column)}"
 #puts "#{row = 5}, #{column = 1}, #{secret_grid(row, column)}"
