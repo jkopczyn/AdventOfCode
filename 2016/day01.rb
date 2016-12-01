@@ -8,14 +8,14 @@ def twisting_grid(filename)
         position = [0, 0]
         history = Set.new([position.to_s])
         commands.each do |token|
-            position, vector, history, visited = 
+            position, vector, history, stop = 
                 move_with_memory(position, vector, token, history)
-            puts "#{token} brings us to #{position}"
-            if(visited)
+            #puts "#{token} brings us to #{position}"
+            if(stop)
                 break
             end
         end
-        p history
+        p position
         position[0].abs + position[1].abs
     end
 end
@@ -24,14 +24,23 @@ def move(position, vector, token)
     results = parse_command(token)
     vector = turn(vector, results[:turn])
     position = advance(position, vector, results[:distance])
-    [position, vector, nil, nil]
+    [position, vector]
 end
 
 def move_with_memory(position, vector, token, history)
-    newpos, newvec = move(position, vector, token)
-    key = newpos.to_s
-    visited = history.include?(key)
-    [newpos, newvec, history.add(key), visited]
+    results, stop = parse_command(token), false
+    newvec = turn(vector, results[:turn])
+    newpos = advance(position, newvec, results[:distance])
+    1.upto(results[:distance]) do |i|
+        step = advance(position, newvec, i)
+        if history.include?(step.to_s)
+            stop = true
+            newpos = step
+            break
+        end
+        history.add(step.to_s)
+    end
+    [newpos, newvec, history, stop]
 end
 
 def advance(position, vector, distance)
@@ -54,4 +63,4 @@ def turn(vector, direction)
     end
 end
 
-puts twisting_grid("input01.txt")
+puts twisting_grid("input.txt")
