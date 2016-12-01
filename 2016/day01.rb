@@ -63,4 +63,4 @@ def turn(vector, direction)
     end
 end
 
-puts twisting_grid("input.txt")
+puts twisting_grid("input01.txt")
