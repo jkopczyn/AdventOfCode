@@ -8,9 +8,14 @@ def twisting_grid(filename)
         position = [0, 0]
         history = Set.new([position.to_s])
         commands.each do |token|
-            position, vector = move_with_memory(position, vector, token, history)
-            #puts "#{token} brings us to #{position}"
+            position, vector, history, visited = 
+                move_with_memory(position, vector, token, history)
+            puts "#{token} brings us to #{position}"
+            if(visited)
+                break
+            end
         end
+        p history
         position[0].abs + position[1].abs
     end
 end
@@ -19,7 +24,7 @@ def move(position, vector, token)
     results = parse_command(token)
     vector = turn(vector, results[:turn])
     position = advance(position, vector, results[:distance])
-    [position, vector]
+    [position, vector, nil, nil]
 end
 
 def move_with_memory(position, vector, token, history)
