@@ -6,13 +6,18 @@ def twisting_grid(filename)
         vector = [0, 1] #x, y
         position = [0, 0]
         commands.each do |token|
-            results = parse_command(token)
-            vector = turn(vector, results[:turn])
-            position = advance(position, vector, results[:distance])
-            puts "#{token} brings us to #{position}"
+            position, vector = move(position, vector, token)
+            #puts "#{token} brings us to #{position}"
         end
         position[0].abs + position[1].abs
     end
+end
+
+def move(position, vector, token)
+    results = parse_command(token)
+    vector = turn(vector, results[:turn])
+    position = advance(position, vector, results[:distance])
+    [position, vector]
 end
 
 def advance(position, vector, distance)
