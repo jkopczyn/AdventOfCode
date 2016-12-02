@@ -4,11 +4,12 @@ CENTER = [1,1]
 
 def function(filename)
   File.open(filename, 'r') do |file|
-      locations = [[1,1]]
+      location = [0,0]
+      diamond_center = [2, 0]
       file.map do |line|
           moves = line.strip.split('')
-          locations.push(chain_moves(moves, locations[-1]))
-          location_to_number(locations[-1])
+          location = chain_moves(moves, location, diamond_center)
+          location_to_number(location, diamond_center)
       end.join('')
   end
 end
@@ -21,7 +22,7 @@ def chain_moves(moves, location, center=CENTER)
             vector[0]+current_location[0],
             vector[1]+current_location[1]
         ]
-        unless out_of_bounds?(relativize(next_location,center))
+        unless out_of_bounds?(relativize(next_location, center))
             current_location = next_location 
         end
     end
@@ -43,8 +44,7 @@ def relativize(location, center)
 end
 
 def out_of_bounds?(relative_location)
-    relative_x, relative_y = relative_location
-    not [relative_x, relative_y].all? { |coord| [-1, 0, 1].include?(coord.abs) }
+    relative_location.map(&:abs).inject(&:+) > 2
 end
 
 def location_to_number(location, center=CENTER)
