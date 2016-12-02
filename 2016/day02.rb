@@ -9,7 +9,7 @@ def function(filename)
           moves = line.strip.split('')
           locations.push(chain_moves(moves, locations[-1]))
           location_to_number(locations[-1])
-      end
+      end.join('')
   end
 end
 
@@ -53,5 +53,5 @@ def location_to_number(location, center=CENTER)
     5 + relative_x - 3*relative_y
 end
 
-puts function("input.txt")
+puts function("input02.txt")
  
