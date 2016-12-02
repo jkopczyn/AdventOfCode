@@ -50,7 +50,13 @@ end
 def location_to_number(location, center=CENTER)
     relative_x, relative_y = relativize(location, center)
     raise "Out Of Bounds Exception" if out_of_bounds?([relative_x, relative_y])
-    5 + relative_x - 3*relative_y
+    case relative_y
+    when 0 then (7 + relative_x).to_s
+    when 1 then (3 + relative_x).to_s
+    when 2 then 1
+    when -1 then ['A','B','C'][relative_x+1]
+    when -2 then 'D'
+    end
 end
 
 puts function("input02.txt")
