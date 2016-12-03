@@ -8,5 +8,10 @@ def function(filename)
   end
 end
 
+def valid_triangle?(triple)
+    a,b,c = triple
+    (a+b > c) and (b+c > a) and (a+c > b)
+end
+
 puts function("input03.txt")
  
