@@ -2,9 +2,9 @@ require 'byebug'
 
 def function(filename)
   File.open(filename, 'r') do |file|
-    file.each do |line|
-        puts valid_room?(line)
-    end
+    file.map do |line|
+        valid_room?(line)
+    end.inject(&:+)
   end
 end
 
@@ -19,5 +19,4 @@ def valid_room?(label)
     end
 end
 
-puts function("input.txt")
- 
+puts function("input04.txt")
