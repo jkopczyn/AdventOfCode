@@ -3,9 +3,38 @@ require 'byebug'
 def function(filename)
   File.open(filename, 'r') do |file|
     file.map do |line|
-        valid_room?(line)
+        valid_room?(line) 
     end.inject(&:+)
   end
+end
+
+def function2(filename)
+  File.open(filename, 'r') do |file|
+    file.each do |line|
+        if valid_room?(line)
+            if shift_name(line)
+                return line
+            end
+        end
+    end
+  end
+end
+
+def shift_name(label)
+    prefix, checksum = label.split(/[\[\]]/)
+    number = prefix.rpartition('-').last.to_i
+    prefix.split('-')[0...-1].join(' ').split('').map do |c|
+        if c == ' '
+           ''
+        else
+            shift_letter(c, number % 26)
+        end
+    end.join('') == 'northpoleobjectstorage'
+end
+
+def shift_letter(letter, number)
+    c = letter.ord
+    ((c + number) < 123 ? (c + number) : (c + number) - 26).chr
 end
 
 def valid_room?(label)
@@ -19,4 +48,4 @@ def valid_room?(label)
     end
 end
 
-puts function("input04.txt")
+puts function2("input04.txt")
