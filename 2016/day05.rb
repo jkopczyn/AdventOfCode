@@ -23,11 +23,11 @@ def valid_index(array, char)
 end
 
 def blank_at_index(array, idx)
-    output[idx] == ''
+    array[idx] == ''
 end
 
 def is_decimal(char)
-    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].include?(char) ? char.to_i : false
+    /[0-9]/.match(char) ? char.to_i : false
 end
 
 
