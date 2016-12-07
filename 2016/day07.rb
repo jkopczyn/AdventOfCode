@@ -9,7 +9,7 @@ def function(filename)
 end
 
 def valid_tls(string)
-   /([a-z])((?!\1)[a-z])\2\1/.match(string)  
+   /([a-z])((?!\1)[a-z])\2\1/.match(string) and not /[\w]*\[[\w]*?([a-z])((?!\1)[a-z])\2\1[\w]*?\][\w]*/.match(string) 
 end
 
 puts function("input.txt")
