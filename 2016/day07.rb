@@ -17,9 +17,9 @@ def valid_ssl(string)
     outside = pieces.select.each_with_index { |_, i| i.even? }
     inside  = pieces.select.each_with_index { |_, i| i.odd? }
     babs = outside.map do |substring| 
-        substring.scan(/(([a-z])((?!\2)[a-z])\2)/) 
-    end.flatten(1).map {|arr| arr[2]+arr[1]+arr[2] }
+        substring.scan(/(?=([a-z])((?!\1)[a-z])\1)/)
+    end.flatten(1).map {|arr| arr[1]+arr[0]+arr[1] }
     p inside, babs
     inside.any? {|substring| babs.any? {|bab| not substring.scan(bab).empty? }}
 end
-puts function("input.txt")
+puts function("input07.txt")
