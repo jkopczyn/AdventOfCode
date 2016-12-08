@@ -11,10 +11,31 @@ def function(filename)
 end
 
 def parse(command)
-    [:rect, 0, 0]
+    [:rect, 1, 1]
 end
 
 def do_op(screen, command)
+    case command[0]
+    when :rect
+        x, y = command[1..2]
+        x.times do |a|
+            y.times do |b|
+                screen[b][a] = true
+            end
+        end
+    when :column
+        x, drop = command[1..2]
+        column = screen.map { |line| line[x] }
+        column.length.times { |row|
+            screen[row][x] = column[(row - drop) % height] }
+    when :row
+        y, shift = command[1..2]
+        row = screen[y].dup
+        row.length.times { |idx|
+            screen[y][idx] = row[(idx - shift)% row.length] }
+    else
+        raise "command???"
+    end
     screen
 end
 
