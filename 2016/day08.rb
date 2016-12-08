@@ -4,9 +4,9 @@ def function(filename)
   File.open(filename, 'r') do |file|
     screen = Array.new(3) { Array.new(7) { false }}
     file.each do |line|
-        do_op(screen, parse(line))
+        screen = do_op(screen, parse(line))
     end
-    screen.map {|row| row.select {|v| v }}.inject(&:+)
+    screen.map {|row| row.map {|v| v ? 1 : 0 }.inject(&:+) }.inject(&:+)
   end
 end
 
