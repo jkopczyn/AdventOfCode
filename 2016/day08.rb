@@ -39,12 +39,12 @@ def do_op(screen, command)
         x, drop = command[1..2]
         column = screen.map { |line| line[x] }
         column.length.times { |row|
-            screen[row][x] = column[(row - drop) % column.length] }
+            screen[row][x] = column[(row - drop)] }
     when :row
         y, shift = command[1..2]
         row = screen[y].dup
         row.length.times { |idx|
-            screen[y][idx] = row[(idx - shift)% row.length] }
+            screen[y][idx] = row[(idx - shift)] }
     else
         raise "command???"
     end
@@ -58,4 +58,3 @@ def print_screen(screen)
 end
 
 puts function("input.txt")
- 
