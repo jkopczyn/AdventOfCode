@@ -17,10 +17,10 @@ def parse(command)
     when "rect"
         [:rect] + tokens[1].split('x').map(&:to_i)
     when "rotate"
-        case tokens[1]
-        when "column"
+        case tokens[2][0]
+        when "x"
             [:column, tokens[2][-1].to_i, tokens.last.to_i]
-        when "row"
+        when "y"
             [:row, tokens[2][-1].to_i, tokens.last.to_i]
         end
     end
