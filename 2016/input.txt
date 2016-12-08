@@ -1,4 +1,39 @@
-rect 3x2
-rotate column x=1 by 1
+rect 1x1
+rotate row y=0 by 20
+rect 1x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 3
+rect 2x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 3
+rect 2x1
+rotate row y=0 by 2
+rect 1x1
 rotate row y=0 by 4
-rotate column x=1 by 1
+rect 2x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 3
+rect 2x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 5
+rect 1x1
+rotate row y=0 by 2
+rect 1x1
+rotate row y=0 by 6
+rect 5x1
+rotate row y=0 by 2
+rect 1x3
+rotate row y=2 by 8
+rotate row y=0 by 8
+rotate column x=0 by 1
+rect 7x1
+rotate row y=2 by 24
+rotate row y=0 by 20

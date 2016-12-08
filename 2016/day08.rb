@@ -2,7 +2,7 @@ require 'byebug'
 
 def function(filename)
   File.open(filename, 'r') do |file|
-    screen = Array.new(3) { Array.new(7) { false }}
+    screen = Array.new(6) { Array.new(50) { false }}
     file.each do |line|
         screen = do_op(screen, parse(line))
     end
@@ -19,9 +19,9 @@ def parse(command)
     when "rotate"
         case tokens[1]
         when "column"
-            [:column, tokens[2][-1].to_i, tokens.last.to_i]
+            [:column, tokens[2].split('=')[1].to_i, tokens.last.to_i]
         when "row"
-            [:row, tokens[2][-1].to_i, tokens.last.to_i]
+            [:row, tokens[2].split('=')[1].to_i, tokens.last.to_i]
         end
     end
 end
@@ -57,4 +57,4 @@ def print_screen(screen)
     end
 end
 
-puts function("input.txt")
+puts function("input08.txt")
