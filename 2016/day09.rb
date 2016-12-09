@@ -37,4 +37,4 @@ def decompress(string)
 end
 
 
-puts function("input.txt")
+puts function("input09.txt")
