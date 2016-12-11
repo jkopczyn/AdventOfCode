@@ -1,13 +1,14 @@
 require 'byebug'
 
 def function(filename)
-    bot_map = Hash.new { |k| { number: k, current: [], low: nil, high: nil } }
+    bot_map = Hash.new { |h, k| { number: k, current: [], low: nil, high: nil } }
     File.open(filename, 'r') do |file|
         file.each do |line|
             result = main_loop(bot_map, parse_line(line))
             return result if result
         end
     end
+    bot_map
 end
 
 def parse_line(string)
@@ -31,24 +32,27 @@ def label(pair)
 end
 
 def main_loop(bots, input)
+    todo = []
     if input.has_key?(:destination)
         todo = [move_chip(bots, input[:destination], input[:value])]
-        until todo.empty?
-            current = todo.pop
-            return current[:solution] if current.has_key?(:solution)
-            handle_move(bots, current).each do |data|
-                todo << data unless data.empty?
-            end
-        end
     elsif input.has_key?(:rule)
         bot = bots[input[:bot]]
         bot[:low], bot[:high] = input[:low], input[:high]
+        bots[input[:bot]] = bot
+        todo = [check_bot(bots, bot)]
+    end
+    until todo.empty?
+        current = todo.pop
+        return current[:solution] unless current.has_key?(:low)
+        handle_move(bots, current).each do |data|
+            todo << data unless data.empty?
+        end
     end
     nil
 end
 
 def check_bot(bots, bot)
-    if bot[:current].length == 2
+    if bot[:current].length == 2 and bot.has_key?(:low)
         if bot[:current].sort == [17, 61]
             return { solution: bot[:number] }
         end
@@ -66,6 +70,7 @@ end
 def move_chip(bots, destination, value)
     target_bot = bots[destination]
     target_bot[:current] << value
+    bots[destination] = target_bot
     check_bot(bots, target_bot)
 end
 
