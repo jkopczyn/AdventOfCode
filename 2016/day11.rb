@@ -11,14 +11,36 @@ def function(filename)
     end
 end
 
+def duplicate(state)
+    [1,2,3,4].map do |i|
+        [i, { generator: state[i][:generator].dup,
+              microchip: state[i][:microchip].dup,
+              elevator: state[i][:elevator]
+        }]
+    end.to_h
+end
+
+def new_state(state, move)
+    old_floor = state.each.select { |k, v| v[:elevator] }.map {|k,v| k }.first
+    new_floor = old_floor + move[0]
+    state[old_floor][:elevator], state[new_floor][:elevator] = false, true
+    state = duplicate(state)
+    move[1].each do |obj|
+        state[old_floor][obj[0]].delete(obj[1])
+        state[new_floor][obj[0]].add(obj[1])
+    end
+    state
+end
+
 def possible_moves(floor, directions=[1, -1])
     return [] if not floor[:elevator]
-    objects = Set.new((floor[:generator].map {|v| Set.new([:generator, v]) } +
-        floor[:microchip].map {|v| Set.new([:microchip, v]) }))
+    objects = Set.new((floor[:generator].map {|v| [:generator, v] } +
+        floor[:microchip].map {|v| [:microchip, v] }))
     one_object = objects.map do |obj|
-        directions.map { |d| [d, obj] }
+        directions.map { |d| [d, [obj]] }
     end.inject([], &:+)
 end
+
 
 def explore_solutions(building)
     return false if is_unsafe?(building)
@@ -33,7 +55,7 @@ def generate_moves(building)
         case key
         when 1 then possible_moves(building[key], directions=[1])
         when 4 then possible_moves(building[key], directions=[-1])
-        else then possible_moves(building[key])
+        else possible_moves(building[key])
         end
     end.inject(&:+)
 end
