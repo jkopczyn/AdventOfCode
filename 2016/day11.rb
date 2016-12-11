@@ -21,8 +21,15 @@ def possible_moves(floor, directions=[1, -1])
 end
 
 def explore_solutions(building)
-    return nil if is_unsafe?(building)
-    next_moves = building.keys.map do |key|
+    return false if is_unsafe?(building)
+    shortest = generate_moves(building).map do |move|
+        explore_solutions(new_state(building, move))
+    end.select {|v| v}.min
+    shortest and (shortest + 1)
+end
+
+def generate_moves(building)
+    building.keys.map do |key|
         case key
         when 1 then possible_moves(building[key], directions=[1])
         when 4 then possible_moves(building[key], directions=[-1])
