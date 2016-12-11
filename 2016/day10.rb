@@ -9,6 +9,26 @@ def function(filename)
     end
 end
 
+def parse_line(string)
+
+end
+
+def main_loop(bots, input)
+    if input.has_key?(:destination)
+        todo = [move_chip(bots, input[:destination], input[:value])]
+        until todo.empty?
+            current = todo.pop
+            return current[:solution] if current.has_key?(:solution)
+            handle_move(bots, current).each do |data|
+                todo << data unless data.empty?
+            end
+        end
+    elsif input.has_key?(:rule)
+        bot = bots[input[:bot]]
+        bot[:low], bot[:high] = input[:low], input[:high]
+    end
+end
+
 def check_bot(bots, bot)
     if bot[:current].length == 2
         if bot[:current].sort == [17, 61]
