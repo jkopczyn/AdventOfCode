@@ -1,6 +1,31 @@
 require 'byebug'
 require 'set'
 
+class Building_State
+    def initialize(options)
+        @floors = [1,2,3,4].map { |i| [i, Floor.new({number: i}) }.to_h
+    end
+end
+
+class Floor
+    attr_accessor :elevator, :number, :generators, :microchips
+    def initialize(options)
+        @elevator = options[:elevator] or false
+        @generators = Set.new|options[:generators]
+        @microchips = Set.new|options[:microchips]
+        @number = options[:number]
+    end
+
+    def dup
+        Floor.new({
+            elevator: @elevator
+            generators: @generators.dup
+            microchips: @microchips.dup
+            number: @number
+        })
+    end
+end
+
 def function(filename)
     File.open(filename, 'r') do |file|
         building = file.each_with_index.map do |line, idx|
