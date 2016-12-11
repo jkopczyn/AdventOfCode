@@ -15,10 +15,20 @@ def check_bot(bots, bot)
             return { solution: bot[:number] }
         end
         low, high = bot[:current].sort
-        move_chip(bots, bot[:low], low)
-        move_chip(bots, bot[:high], high)
-        bot[:current] = []
+        bots[bot[:number]][:current] = []
+        return {low: [bot[:low], low], high: [bot[:high], high]}
     end
+    {}
+end
+
+def handle_move(bots, move)
+    [move_chip(bots, *move[:low]), move_chip(bots, *move[:high])]
+end
+
+def move_chip(bots, destination, value)
+    target_bot = bots[destination]
+    target_bot[:current] << value
+    check_bot(bots, target_bot)
 end
 
 
