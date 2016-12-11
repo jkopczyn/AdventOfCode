@@ -7,7 +7,7 @@ def function(filename)
             [1+idx, parse_line(line)]
         end.to_h
         building[1][:elevator] = true
-        explore_solutions(building)
+        explore_solutions(building, Set.new)
     end
 end
 
@@ -42,10 +42,12 @@ def possible_moves(floor, directions=[1, -1])
 end
 
 
-def explore_solutions(building)
-    return false if is_unsafe?(building)
+def explore_solutions(building, history)
+    return 0 if is_successful?(building)
+    return false if is_unsafe?(building) or history.include?(building)
+    history.add(building)
     shortest = generate_moves(building).map do |move|
-        explore_solutions(new_state(building, move))
+        explore_solutions(new_state(building, move), history)
     end.select {|v| v}.min
     shortest and (shortest + 1)
 end
@@ -58,6 +60,14 @@ def generate_moves(building)
         else possible_moves(building[key])
         end
     end.inject(&:+)
+end
+
+def is_successful?(building)
+    building[4][:elevator] and [1,2,3].all? do |level|
+        [:generator, :microchip].all? do |object|
+            building[level][object].empty?
+        end
+    end
 end
 
 def is_unsafe?(building)
