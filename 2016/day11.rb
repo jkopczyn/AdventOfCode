@@ -21,10 +21,14 @@ def possible_moves(floor, directions=[1, -1])
 end
 
 def explore_solutions(building)
-    building.keys.map do |key|
-        next if is_unsafe?(building)
-        possible_moves(building[key])
-    end
+    return nil if is_unsafe?(building)
+    next_moves = building.keys.map do |key|
+        case key
+        when 1 then possible_moves(building[key], directions=[1])
+        when 4 then possible_moves(building[key], directions=[-1])
+        else then possible_moves(building[key])
+        end
+    end.inject(&:+)
 end
 
 def is_unsafe?(building)
