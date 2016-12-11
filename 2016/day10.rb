@@ -43,7 +43,7 @@ def main_loop(bots, input)
     end
     until todo.empty?
         current = todo.pop
-        return current[:solution] unless current.has_key?(:low)
+        return current[:solution] unless current[:low]
         handle_move(bots, current).each do |data|
             todo << data unless data.empty?
         end
@@ -52,7 +52,7 @@ def main_loop(bots, input)
 end
 
 def check_bot(bots, bot)
-    if bot[:current].length == 2 and bot.has_key?(:low)
+    if bot[:current].length == 2 and bot[:low] and bot[:high]
         if bot[:current].sort == [17, 61]
             return { solution: bot[:number] }
         end
@@ -75,4 +75,4 @@ def move_chip(bots, destination, value)
 end
 
 
-puts function("input.txt")
+puts function("input10.txt")
