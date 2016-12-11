@@ -8,7 +8,8 @@ def function(filename)
             return result if result
         end
     end
-    bot_map
+    outputs = bot_map.each.select { |k, v| k.is_a?(Symbol) }.to_h
+    [outputs[:output0], outputs[:output1], outputs[:output2]]
 end
 
 def parse_line(string)
@@ -53,17 +54,16 @@ end
 
 def check_bot(bots, bot)
     if bot[:current].length == 2 and bot[:low] and bot[:high]
-        if bot[:current].sort == [17, 61]
-            return { solution: bot[:number] }
-        end
         low, high = bot[:current].sort
         bots[bot[:number]][:current] = []
+        debugger if bot[:low].nil? or bot[:high].nil?
         return {low: [bot[:low], low], high: [bot[:high], high]}
     end
     {}
 end
 
 def handle_move(bots, move)
+    debugger if move[:low][0].nil? or move[:high][0].nil?
     [move_chip(bots, *move[:low]), move_chip(bots, *move[:high])]
 end
 
