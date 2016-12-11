@@ -36,9 +36,12 @@ def possible_moves(floor, directions=[1, -1])
     return [] if not floor[:elevator]
     objects = Set.new((floor[:generator].map {|v| [:generator, v] } +
         floor[:microchip].map {|v| [:microchip, v] }))
-    one_object = objects.map do |obj|
-        directions.map { |d| [d, [obj]] }
-    end.inject([], &:+)
+    subsets = Set.new(objects.map do |obj1|
+        objects.map { |obj2| Set.new([obj1, obj2]) }
+    end).inject(&:+)
+    subsets.map do |subset|
+        directions.map { |d| [d, subset] }.to_a
+    end.inject(&:+)
 end
 
 
@@ -46,6 +49,8 @@ def explore_solutions(building, history)
     return 0 if is_successful?(building)
     return false if is_unsafe?(building) or history.include?(building)
     history.add(building)
+    p history.size
+    debugger if history.size % 1024 == 0
     shortest = generate_moves(building).map do |move|
         explore_solutions(new_state(building, move), history)
     end.select {|v| v}.min
