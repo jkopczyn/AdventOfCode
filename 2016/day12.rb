@@ -15,8 +15,19 @@ end
 
 def parse(command)
     type, x, y = command.split
-    y = 0 if y.nil?
-    [type.to_sym, x.to_i, y.to_i]
+    type = type.to_sym
+    if [:inc, :dec].include?(type)
+        [type, x.to_sym, 0]
+    elsif type == :cpy
+        [type, sym_or_num(x), y.to_sym]
+    else
+        [type, sym_or_num(x), sym_or_num(y)]
+    end
+end
+
+def sym_or_num(symbol)
+    return symbol.to_i if /[0-9]+/.match(symbol)
+    symbol.to_sym
 end
 
 def finished?(state)
@@ -24,11 +35,13 @@ def finished?(state)
 end
 
 def evolve(state)
+    state = execute(state, state[:commands][state[:idx]])
+    state[:idx] += 1
     state
 end
 
 def execute(state, instruction)
-
+    state
 end
 
 p function("input.txt")
