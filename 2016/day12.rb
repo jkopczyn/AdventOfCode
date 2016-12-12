@@ -3,7 +3,6 @@ require 'byebug'
 def function(filename)
     state = {}
     File.open(filename, 'r') do |file|
-        #file.read.strip
         commands = file.map { |line| parse(line) }
         state = {a: 0, b: 0, c: 1, d:0, commands: commands, idx: 0}
         until finished?(state)
@@ -15,14 +14,8 @@ end
 
 def parse(command)
     type, x, y = command.split
-    type = type.to_sym
-    if [:inc, :dec].include?(type)
-        [type, x.to_sym, 0]
-    elsif type == :cpy
-        [type, sym_or_num(x), y.to_sym]
-    else
-        [type, sym_or_num(x), sym_or_num(y)]
-    end
+    y = 1 if y.nil?
+    [type.to_sym, sym_or_num(x), sym_or_num(y)]
 end
 
 def sym_or_num(symbol)
@@ -31,7 +24,6 @@ def sym_or_num(symbol)
 end
 
 def finished?(state)
-    #p state, state[:idx], state[:commands][state[:idx]]
     p state[:commands][state[:idx]]
     state[:idx] >= state[:commands].length
 end
@@ -50,9 +42,9 @@ end
 def execute(state, instruction)
     case instruction[0]
     when :inc
-        state[instruction[1]] += 1
+        state[instruction[1]] += dereference(state, instruction[2])
     when :dec
-        state[instruction[1]] -= 1
+        state[instruction[1]] -= dereference(state, instruction[2])
     when :cpy
         state[instruction[2]] = dereference(state, instruction[1])
     when :jnz

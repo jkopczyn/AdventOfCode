@@ -4,20 +4,14 @@ cpy 26 d
 jnz c 2
 jnz 1 5
 cpy 7 c
-inc d
-dec c
-jnz c -2
+inc d c
 cpy a c
-inc a
-dec b
-jnz b -2
+inc a b
 cpy c b
 dec d
-jnz d -6
+jnz d -4
 cpy 16 c
 cpy 17 d
-inc a
-dec d
-jnz d -2
+inc a d
 dec c
-jnz c -5
+jnz c -3
