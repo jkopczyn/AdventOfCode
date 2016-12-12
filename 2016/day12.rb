@@ -5,7 +5,7 @@ def function(filename)
     File.open(filename, 'r') do |file|
         #file.read.strip
         commands = file.map { |line| parse(line) }
-        state = {a: 0, b: 0, c: 0, d:0, commands: commands, idx: 0}
+        state = {a: 0, b: 0, c: 1, d:0, commands: commands, idx: 0}
         until finished?(state)
             evolve(state)
         end
