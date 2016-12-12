@@ -31,6 +31,8 @@ def sym_or_num(symbol)
 end
 
 def finished?(state)
+    #p state, state[:idx], state[:commands][state[:idx]]
+    p state[:commands][state[:idx]]
     state[:idx] >= state[:commands].length
 end
 
@@ -56,7 +58,7 @@ def execute(state, instruction)
     when :jnz
         _, condition, offset = instruction
         if dereference(state, condition) != 0
-            state[:idx] += dereference(state, offset) + 1
+            state[:idx] += dereference(state, offset) - 1
         end
     end
     state
