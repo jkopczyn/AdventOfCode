@@ -18,9 +18,9 @@ def parse(command)
     [type.to_sym, sym_or_num(x), sym_or_num(y)]
 end
 
-def sym_or_num(symbol)
-    return symbol.to_i if /[0-9]+/.match(symbol)
-    symbol.to_sym
+def sym_or_num(input)
+    return input.to_i if /[0-9]+/.match(input.to_s)
+    input.to_sym
 end
 
 def finished?(state)
