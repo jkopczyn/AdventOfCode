@@ -8,12 +8,12 @@ def keygen(salt, target=64)
     storage = {}
     while keys.length < target
         i += 1
-        hash = hash_gen(digest, salt, i, storage)
+        hash = hash_gen2(digest, salt, i, storage)
         c = check_triple(hash)
         next unless c
         #puts "#{i}, #{c}"
         1000.times do |j|
-            hash = hash_gen(digest, salt, i+1+j, storage)
+            hash = hash_gen2(digest, salt, i+1+j, storage)
             next unless check_quintuple(hash, c)
             keys.push(i)
             puts "#{i}, #{j}"
@@ -27,6 +27,19 @@ def hash_gen(digest, salt, msg, storage)
     storage[salt] = {} unless storage[salt]
     unless storage[salt][msg]
         storage[salt][msg] = digest.hexdigest(salt + msg.to_s)
+    end
+    storage[salt][msg]
+end
+
+
+def hash_gen2(digest, salt, msg, storage)
+    storage[salt] = {} unless storage[salt]
+    unless storage[salt][msg]
+        res = salt + msg.to_s
+        2017.times do
+            res  = digest.hexdigest(res)
+        end
+        storage[salt][msg] = res
     end
     storage[salt][msg]
 end
@@ -47,7 +60,6 @@ def check_quintuple(hexstring, char)
     end
     false
 end
-
 
 digest = Digest::MD5.new
 puts keygen("abc", 1)
