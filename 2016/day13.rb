@@ -1,49 +1,13 @@
 require 'byebug'
 
-def function(favorite_number, target)
-    map = make_map(favorite_number, target)
-    a_star(map, [1,1], target)
-end
-
-def make_map(favorite_number, target)
-    x, y = target
-    map = {}
-    (x*2).times do |h|
-        (y*2).times do |v|
-            value = h*h+3*h+2*h*v+v+v*v + favorite_number
-            map[[h,v]] = binary_ones(value)
-        end
-    end
-    map
-end
-
-def a_star(map, source, dest)
-    puts map
-end
-
-def binary_ones(number)
-    count = 0
-    while number > 0
-        unless number % 2 == 0
-            count += 1
-            number -= 1
-        end
-        number /= 2
-    end
-    count
-end
-
-puts function(10, [7,4])
-puts function(1358, [31,39])
-
-
 ###What follows comes from https://github.com/Pommespanzer
 class Astar
 
-    def initialize(start, destination)
+    def initialize(start, destination, map)
         # create start and destination nodes
-        @start_node = Astar_Node.new(start['x'], start['y'], -1, -1, -1, -1)
-        @dest_node  = Astar_Node.new(destination['x'], destination['y'], -1, -1, -1, -1)
+        @map = map
+        @start_node = Astar_Node.new(start[:x], start[:y], -1, -1, -1, -1)
+        @dest_node  = Astar_Node.new(destination[:x], destination[:y], -1, -1, -1, -1)
 
         @open_nodes   = [] # contains all open nodes (nodes to be inspected)
         @closed_nodes = [] # contains all closed nodes (node we've already inspected)
@@ -53,7 +17,8 @@ class Astar
 
     # calc heuristic
     def heuristic(current_node, destination_node)
-        return ( Math.sqrt( ((current_node.x - destination_node.x) ** 2) + ((current_node.y - destination_node.y) ** 2) ) ).floor
+        return ((current_node.x - destination_node.x) +
+                (current_node.y - destination_node.y))
     end
 
     # calc cost
@@ -61,7 +26,7 @@ class Astar
         direction = direction(current_node, destination_node)
 
         return 10 if [2, 4, 6, 8].include?(direction) # south, west, east, north
-        return 14
+        raise WTF
     end
 
     # determine direction (2, 4, 6, 8)
@@ -79,7 +44,7 @@ class Astar
 
     # field passable?
     def passable?(x, y)
-        return true
+        return @map[[x,y]]
     end
 
     # expand node in all 4 directions
@@ -231,3 +196,71 @@ class Astar_Node
     end
 
 end
+
+#what follows in my original code
+def part1(favorite_number, target)
+    map = make_map(favorite_number, target)
+    answer = a_star(map, [1,1], target)
+end
+
+def part2(favorite_number, steps)
+    map = make_map(favorite_number, [(steps+1)/2, (steps+1)/2])
+    walked = dfs(map, [1,1], steps)
+    count(walked)
+end
+
+def make_map(favorite_number, target)
+    x, y = target
+    map = {}
+    (x*2).times do |h|
+        (y*2).times do |v|
+            value = h*h+3*h+2*h*v+v+v*v + favorite_number
+            map[[h,v]] = (binary_ones(value) %2 == 0)
+        end
+    end
+    map
+end
+
+def a_star(map, source, dest)
+    find = Astar.new({x: source[1], y: source[1]},
+                     {x: dest[0], y: dest[1]},
+                     map
+                    )
+    result = find.search.size - 1
+end
+
+def binary_ones(number)
+    count = 0
+    while number > 0
+        unless number % 2 == 0
+            count += 1
+            number -= 1
+        end
+        number /= 2
+    end
+    count
+end
+
+def dfs(map, start, depth)
+    return map if depth < 0
+    x, y = start[0], start[1]
+    map[[x,y]] = depth
+    [[x+1, y], [x, y+1], [x-1, y], [x,y-1]].each do |pair|
+        h, v = pair
+        next if h<0 or v<0
+        if map[pair]
+            unless map[pair].is_a?(Integer) and map[pair] >= depth
+                dfs(map, pair, depth-1)
+            end
+        end
+    end
+    return map
+end
+
+def count(map)
+    map.values.select {|el| el.is_a?(Integer) }.length
+end
+
+
+puts part1(1358, [31,39])
+puts part2(1358, 50)
