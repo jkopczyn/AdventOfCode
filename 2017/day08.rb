@@ -1,15 +1,19 @@
 require 'byebug'
 
-def function(filename)
+def function(filename, history=false)
     File.open(filename, 'r') do |file|
         registers = Hash.new(0)
+        max_ever = 0
         file.each do |line|
             reg, op, amt, _, reg2, cond, thresh = line.split
             if check_cond(registers, reg2, cond, thresh)
                 registers = do_op(registers, reg, op, amt)
+                if history
+                    max_ever = [max_ever, registers[reg]].max
+                end
             end
         end
-        registers.values.max
+        [registers.values.max, max_ever].max
     end
 end
 
