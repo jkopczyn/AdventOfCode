@@ -1,11 +1,22 @@
 require 'byebug'
 
-def function(filename)
+def function(filename, history=false)
     File.open(filename, 'r') do |file|
-        space = file.read.strip.split(',').each.map do |dir|
+        moves = file.read.strip.split(',').each.map do |dir|
             map_to_coords(dir)
-        end.inject {|c,d| coord_add(c,d) }
-        shortest_path(space)
+        end
+        if not history
+            space = moves.inject {|c,d| coord_add(c,d) }
+            return shortest_path(space)
+        else
+            space = [0,0]
+            far   = 0
+            moves.each do |move|
+                space = coord_add(space, move)
+                far = [far, shortest_path(space)].max
+            end
+            return far
+        end
     end
 end
 
@@ -27,3 +38,5 @@ def shortest_path(space)
 end
 puts function("input.txt")
 puts function("input11.txt")
+puts function("input.txt", history=true)
+puts function("input11.txt", history=true)
