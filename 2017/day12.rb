@@ -19,7 +19,14 @@ def function(filename)
             end
             break if unchanged
         end
-        return pipes['0'].uniq!.size
+        p pipes['0'].uniq!.size
+        pipes.keys.each do |k|
+            group = pipes[k].uniq
+            pipes.delete(k)
+            group.each { |v| pipes.delete(v) }
+            pipes[k] = group unless group.empty?
+        end
+        return pipes.size
     end
 end
 
