@@ -35,7 +35,7 @@ end
 
 def main(filename, rounds)
     File.open(filename, 'r') do |file|
-        string = file.read
+        string = file.read.strip
         many_round(string, rounds)
     end
 end
@@ -52,12 +52,12 @@ def many_round(input, rounds)
     bytes = 16.times.map do |n|
         string[16*n...(16*(n+1))].inject(&:^)
     end
-    bytes.map { |n| n.to_s(16) }.inject(&:+)
+    bytes.map { |n| n.to_s(16).rjust(2,'0') }.inject(&:+)
 end
 
 
 p one_round("input.txt", 5)
 p one_round("input10.txt", 256)
-debugger
-p many_round('', 64)
+p many_round('', 64) 
+p many_round('AoC 2017', 64)
 p main("input10.txt", 64)
