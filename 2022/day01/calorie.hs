@@ -8,7 +8,7 @@ processLines :: String -> String
 processLines input = unlines (business (lines input))
 
 business :: [String] -> [String]
-business xs = intsToLines (realBusiness (linesToInts xs))
+business xs = [show (maximum (realBusiness (linesToInts xs)))]
 
 realBusiness :: [Integer] -> [Integer]
 realBusiness xs = combine [0] xs
