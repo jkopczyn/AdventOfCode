@@ -1,4 +1,5 @@
 import System.IO
+import Data.List
 
 main = do  
     contents <- getContents  
@@ -8,7 +9,9 @@ processLines :: String -> String
 processLines input = unlines (business (lines input))
 
 business :: [String] -> [String]
-business xs = [show (maximum (realBusiness (linesToInts xs)))]
+business xs =
+  let theList = (realBusiness (linesToInts xs))
+  in map show ((maximum theList):[sum (take 3 (reverse (Data.List.sort theList)))])
 
 realBusiness :: [Integer] -> [Integer]
 realBusiness xs = combine [0] xs
