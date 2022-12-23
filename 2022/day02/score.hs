@@ -29,11 +29,15 @@ scorePair (Scissors, Rock)      = 7
 scorePair (Rock,     Paper)     = 8
 scorePair (Paper,    Scissors)  = 9
 
+lineToTwoWords :: String -> (String, String)
+lineToTwoWords str = case (words str) of (_:_:_:_)  -> error "line with 3+ symbols"
+                                         (_:[])     -> error "line with only one symbol"
+                                         []         -> error "empty line"
+                                         [x, y] -> (x, y)
+
 castToPair :: String -> (RPS, RPS)
-castToPair str = case (words str) of (_:_:_:_)  -> error "line with 3+ symbols"
-                                     (_:[])     -> error "line with only one symbol"
-                                     []         -> error "empty line"
-                                     [x, y] -> (wordToRPS x, wordToRPS y)
+castToPair str = let (x, y) = lineToTwoWords str
+                 in (wordToRPS x, wordToRPS y)
 --     case expression of pattern -> result  
 --                        pattern -> result  
 --                        pattern -> result  
