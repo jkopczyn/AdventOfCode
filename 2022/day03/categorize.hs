@@ -27,23 +27,18 @@ intsToLines (x:xs) = (show x):(intsToLines xs)
 splitString :: String -> (String, String)
 -- split into first half and second half
 splitString [] = ([], [])
-splitString str = splitAndHalfReflect [] str
+splitString str = splitStringHelper ([], str)
 
-splitAndHalfReflect :: (String, String) -> (String, String)
-splitAndHalfReflect ([], []) = ([], [])
-splitAndHalfReflect (ys, (x:xs)) = if (length ys) >= (length (x:xs))
-                                   then (ys, (x:xs))
-                                   else (splitAndHalfReflect (x:ys) xs)
-
-
+splitStringHelper :: (String, String) -> (String, String)
+splitStringHelper ([], []) = ([], [])
+splitStringHelper (xs, (x:y:ys)) =
+    if (length xs) <= (length ys)
+    then splitStringHelper ((x:xs), (y:ys))
+    else (reverse xs, x:y:ys)
 
 priority :: Char -> Integer
 -- a-z are 1-26, A-Z are 27-52
 priority char = 0 -- not sure how to do this
-
-charMap :: [Char] -> M.Map Char Integer
--- counts how many of c exist, stores in a dict
-charMap str = M.fromList str
 
 charSet :: [Char] -> S.Set Char
 -- tracks all c which exist, stores in a set
