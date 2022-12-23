@@ -8,11 +8,15 @@ processLines :: String -> String
 processLines input = unlines (business (lines input))
 
 business :: [String] -> [String]
-business xs = [show (sum (scoreLines xs))]
+business xs = [show (sum (scoreLines xs)), show (sum (scoreLines2 xs))]
 
 scoreLines :: [String] -> [Integer]
 scoreLines [] = []
 scoreLines (x:xs) = (scorePair (castToPair x)):(scoreLines xs)
+
+scoreLines2 :: [String] -> [Integer]
+scoreLines2 [] = []
+scoreLines2 (x:xs) = (scorePair (castToPairAlt x)):(scoreLines2 xs)
 
 data RPS = Rock | Paper | Scissors deriving (Show)
 
@@ -50,6 +54,21 @@ wordToRPS "A" = Rock
 wordToRPS "B" = Paper
 wordToRPS "C" = Scissors
 wordToRPS x = error ("no encoding to RPS move for symbol " ++ show x)
+
+castToPairAlt :: String -> (RPS, RPS)
+castToPairAlt str = let (x, y) = lineToTwoWords str
+                    in (wordToRPS x, wordPairToMove (wordToRPS x) y)
+
+-- lose
+wordPairToMove move "X" = case move of Rock -> Scissors
+                                       Paper -> Rock
+                                       Scissors -> Paper
+-- draw
+wordPairToMove move "Y" = move
+-- win
+wordPairToMove move "Z" = case move of Rock -> Paper
+                                       Paper -> Scissors
+                                       Scissors -> Rock
 
 combine :: [Integer] -> [Integer] -> [Integer]
 combine made [] = made
