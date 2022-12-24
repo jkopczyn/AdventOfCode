@@ -8,10 +8,24 @@ main = do  
     putStr (processLines contents)  
 
 processLines :: String -> String
-processLines input = unlines (business (lines input))
+processLines input = unlines (business ls) ++ "\n" ++ unlines (business2 ls)
+    where ls = lines input
 
 business :: [String] -> [String]
-business xs = [show (priority (linesToSharedChars xs))]
+business xs = [show (totalScore (linesToSharedChars xs))]
+
+business2 :: [String] -> [String]
+business2 xs = [show (totalScore (groupSharedChar (batch3 xs)))]
+
+batch3 :: [String] -> [(String, String, String)]
+batch3 [] = []
+batch3 (x:y:z:xs) = (x,y,z) : (batch3 xs)
+-- batch3 badXs = error ("list length not multiple of 3: " + (show badXs))
+
+groupSharedChar :: [(String, String, String)] -> [Char]
+groupSharedChar [] = []
+groupSharedChar ((x,y,z):xs) = (head (S.toList (S.intersection (S.intersection (charSet x) (charSet y)) (charSet z)))):(groupSharedChar xs)
+
 
 intsToLines :: [Int] -> [String]
 intsToLines [] = []
@@ -29,9 +43,9 @@ splitStringHelper (xs, (x:y:ys)) =
     then splitStringHelper ((x:xs), (y:ys))
     else (reverse xs, x:y:ys)
 
-priority :: [Char] -> Int
+totalScore :: [Char] -> Int
 -- a-z are 1-26, A-Z are 27-52
-priority chars = sum (map toNum chars)
+totalScore chars = sum (map toNum chars)
 
 toNum c | isUpper c = (ord c) - 64 + 26 -- A is codepoint 65 and should be 27
         | isLower c = (ord c) - 96      -- A is codepoint 97 and should be 1
