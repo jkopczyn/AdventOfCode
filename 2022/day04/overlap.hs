@@ -9,15 +9,19 @@ processLines :: String -> String
 processLines input = unlines (business (lines input))
 
 business :: [String] -> [String]
-business xs = [show (realBusiness (linesToCoords xs))]
+business xs = [show (realBusiness (linesToCoords xs)), show (realBusiness2 (linesToCoords xs))]
 
--- realBusiness :: [Integer] -> [Integer]
 realBusiness xs = length (filter sharedMatchesEither xs)
+
+realBusiness2 xs = length (filter nonemptyIntersection xs)
 
 sharedMatchesEither :: ((Integer, Integer), (Integer, Integer)) -> Bool
 sharedMatchesEither (x, y) = let shared = (intersect (x, y))
                              in ((x ==  shared) || (y == shared))
 
+nonemptyIntersection :: ((Integer, Integer), (Integer, Integer)) -> Bool
+nonemptyIntersection pair = let shared = intersect pair
+                            in (fst shared) <= (snd shared)
 
 linesToCoords :: [String] -> [((Integer, Integer), (Integer, Integer))]
 linesToCoords [] = []
