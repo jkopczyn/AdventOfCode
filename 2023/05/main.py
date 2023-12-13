@@ -43,8 +43,9 @@ def main():
         elif step == 7:
             loclines.append(line)
 
-    cleanseedline = seedslines[0].split(":")[-1]
-    seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
+    cleanseedsline = seedslines[0].split(":")[-1]
+    # seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
+    seeds = seedranges(cleanseedsline)
 
     initial = list(s for s in seeds)
     mutated = list(s for s in seeds)
@@ -53,6 +54,19 @@ def main():
     for idx in range(len(seeds)):
         print(seeds[idx], mutated[idx])
     print(min(mutated))
+
+def seedranges(seedsline):
+    seeds = []
+    start = -1
+    nums = list(int(s) for s in seedsline.split(" ") if s.strip() != "")
+    for n in nums:
+        if start == -1:
+            start = n
+        else:
+            seeds.extend(range(start, start+n))
+            start = -1
+    return list(sorted(seeds))
+
 
 def mutate(lst, inputs):
     newlist = list(-1 for x in lst)
