@@ -13,6 +13,27 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
+    # allparts(args)
+    gears(args)
+
+def gears(args):
+    lines = []
+    grid = []
+    totalratio = 0
+    for line in args.input:
+        lines.append(line.strip())
+        grid.append(list(line.strip()))
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            if grid[y][x] == "*":
+                parts = selectsafe(grid, x, y)
+                print(parts)
+                if len(parts) == 2:
+                    totalratio += parts[0]*parts[1]
+    # print(grid)
+    print(totalratio, file=args.output)
+
+def allparts(args):
     lines = []
     grid = []
     totalpart = 0
@@ -23,12 +44,40 @@ def main():
         for x in range(len(grid[y])):
             if grid[y][x] not in "0123456789.":
                 newgrid, parts = select(grid, x, y)
-                print(parts, file=args.output)
+                # print(parts)
                 for part in parts:
                     totalpart += part
                 grid = newgrid
-    print(grid)
+    # print(grid)
     print(totalpart, file=args.output)
+
+def selectsafe(grid, x, y):
+    parts = []
+    # look above
+    if y>0:
+        if isnum(grid[y-1][x]):
+            grid, parts = looksafe(grid, y-1, x, parts)
+        else:
+            if x>0 and isnum(grid[y-1][x-1]):
+                grid, parts = looksafe(grid, y-1, x-1, parts)
+            if x<(len(grid[0])-1) and isnum(grid[y-1][x+1]):
+                grid, parts = looksafe(grid, y-1, x+1, parts)
+    # looksafe left
+    if x>0 and isnum(grid[y][x-1]):
+        grid, parts = looksafe(grid, y, x-1, parts)
+    # looksafe right
+    if x<(len(grid[0])-1) and isnum(grid[y][x+1]):
+        grid, parts = looksafe(grid, y, x+1, parts)
+    # looksafe below
+    if y<(len(grid)-1):
+        if isnum(grid[y+1][x]):
+            grid, parts = looksafe(grid, y+1, x, parts)
+        else:
+            if x>0 and isnum(grid[y+1][x-1]):
+                grid, parts = looksafe(grid, y+1, x-1, parts)
+            if x<(len(grid[0])-1) and isnum(grid[y+1][x+1]):
+                grid, parts = looksafe(grid, y+1, x+1, parts)
+    return parts
 
 def select(grid, x, y):
     parts = []
@@ -56,6 +105,11 @@ def select(grid, x, y):
                 grid, parts = look(grid, y+1, x-1, parts)
             if x<(len(grid[0])-1) and isnum(grid[y+1][x+1]):
                 grid, parts = look(grid, y+1, x+1, parts)
+    return grid, parts
+
+def looksafe(grid, y, x, parts):
+    num, _, _ = bounds(grid[y], x)
+    parts.append(num)
     return grid, parts
 
 def look(grid, y, x, parts):
