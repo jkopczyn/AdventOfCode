@@ -13,10 +13,17 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
+    idsum = 0
     for line in args.input:
         game, pulls = line.split(":")
-        print(getgame(game), maximum(pulls), file=args.output)
-        #print(line.strip(), file=args.output)
+        if valid(maximum(pulls)):
+            print(getgame(game), file=args.output)
+            idsum += int(getgame(game))
+    print(idsum, file=args.output)
+
+def valid(result):
+    r, g, b = result["r"], result["g"], result["b"]
+    return(r <= 12 and g <= 13 and b <= 14)
 
 def getgame(s):
     return s[-1]
