@@ -34,20 +34,28 @@ def select(grid, x, y):
     parts = []
     # look above
     if y>0:
-        pass
+        if isnum(grid[y-1][x]):
+            grid, parts = look(grid, y-1, x, parts)
+        else:
+            if x>0 and isnum(grid[y-1][x-1]):
+                grid, parts = look(grid, y-1, x-1, parts)
+            if x<(len(grid[0])-1) and isnum(grid[y-1][x+1]):
+                grid, parts = look(grid, y-1, x+1, parts)
     # look left
     if x>0 and isnum(grid[y][x-1]):
-        num, left, right = bounds(grid[y], x-1)
-        clear(grid, y, left, right)
-        parts.append(num)
+        grid, parts = look(grid, y, x-1, parts)
     # look right
     if x<(len(grid[0])-1) and isnum(grid[y][x+1]):
-        num, left, right = bounds(grid[y], x+1)
-        clear(grid, y, left, right)
-        parts.append(num)
+        grid, parts = look(grid, y, x+1, parts)
     # look below
     if y<(len(grid)-1):
         pass
+    return grid, parts
+
+def look(grid, y, x, parts):
+    num, left, right = bounds(grid[y], x)
+    clear(grid, y, left, right)
+    parts.append(num)
     return grid, parts
 
 def isnum(c):
