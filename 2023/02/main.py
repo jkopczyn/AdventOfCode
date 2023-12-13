@@ -17,7 +17,7 @@ def main():
     for line in args.input:
         game, pulls = line.split(":")
         if valid(maximum(pulls)):
-            print(getgame(game), file=args.output)
+            print(getgame(game), maximum(pulls), pulls, file=args.output)
             idsum += int(getgame(game))
     print(idsum, file=args.output)
 
@@ -33,12 +33,15 @@ def digest(draws):
     r, g, b = 0, 0 , 0
     for draw in draws:
         _, n, label = draw.split(" ")
+        label = label.strip()
         if label == "red":
             r += int(n)
         elif label == "green":
             g += int(n)
         elif label == "blue":
             b += int(n)
+        else:
+            raise(Exception(label))
     return r, g, b
 
 def maximum(pulls):
