@@ -46,19 +46,20 @@ def main():
     cleanseedline = seedslines[0].split(":")[-1]
     seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
 
-    initial = list(range(max(seeds)+1))
-    mutated = list(range(max(seeds)+1))
+    initial = list(s for s in seeds)
+    mutated = list(s for s in seeds)
     for transition in [soillines, fertilizerlines, waterlines, lightlines, templines, humidlines, loclines]:
         mutated = mutate(mutated, clean(transition))
-    for seed in seeds:
-        print(seed, mutated[seed])
+    for idx in range(len(seeds)):
+        print(seeds[idx], mutated[idx])
+    print(min(mutated))
 
 def mutate(lst, inputs):
     newlist = list(-1 for x in lst)
     for inp in inputs:
         newlist = singlemutate(lst, newlist, inp)
     newlist = infill(lst, newlist)
-    print(newlist)
+    # print(newlist)
     return newlist
 
 def singlemutate(srclist, destlist, triple):
@@ -85,7 +86,7 @@ def clean(lines):
             continue
         a, b, c = (int(x.strip()) for x in l.split(" "))
         triples.append((a,b,c))
-    print(triples)
+    # print(triples)
     return triples
 
 if __name__ == "__main__":
