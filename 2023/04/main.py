@@ -24,7 +24,8 @@ def main():
         if scoring:
             totalscore += score(winners, picks)
         else:
-            _, c = card.split(" ")
+            cs = card.split(" ")
+            c = cs[-1]
             cardwins[int(c)] = wins(winners, picks)
     if scoring:
         print(totalscore, file=args.output)
