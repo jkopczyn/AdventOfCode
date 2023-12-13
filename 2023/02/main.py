@@ -15,13 +15,32 @@ def main():
     args = parser.parse_args()
     for line in args.input:
         game, pulls = line.split(":")
-        print(line.strip(), file=args.output)
+        print(getgame(game), maximum(pulls), file=args.output)
+        #print(line.strip(), file=args.output)
 
 def getgame(s):
     return s[-1]
 
-def total(pulls):
+def digest(draws):
+    r, g, b = 0, 0 , 0
+    for draw in draws:
+        _, n, label = draw.split(" ")
+        if label == "red":
+            r += int(n)
+        elif label == "green":
+            g += int(n)
+        elif label == "blue":
+            b += int(n)
+    return r, g, b
+
+def maximum(pulls):
     ts = {"r": 0, "g": 0, "b": 0}
+    for pull in pulls.split(";"):
+        draws = pull.split(",")
+        r, g, b = digest(draws)
+        ts["r"] = max(r, ts["r"])
+        ts["g"] = max(g, ts["g"])
+        ts["b"] = max(b, ts["b"])
     return ts
 
 #  Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
