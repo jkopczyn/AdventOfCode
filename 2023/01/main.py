@@ -21,15 +21,27 @@ def main():
 def numerals(line):
     first = -1
     last = -1
-    for c in line:
-        if c in "0123456789":
+    for idx in range(len(line)):
+        d = digit(line, idx)
+        if d >= 0:
             if first < 0:
-                first = int(c)
+                first = d
                 last = first
             else:
-                last = int(c)
+                last = d
     return 10*first+last
 
+def digit(line, idx):
+    if line[idx] in "0123456789":
+        return int(line[idx])
+    mapper = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
+    if line[idx:idx+3] in ["six", "two", "one"]:
+        return mapper[line[idx:idx+3]]
+    if line[idx:idx+4] in ["four", "five", "nine"]:
+        return mapper[line[idx:idx+4]]
+    if line[idx:idx+5] in ["three", "seven", "eight"]:
+        return mapper[line[idx:idx+5]]
+    return -1
 
 if __name__ == "__main__":
     main()
