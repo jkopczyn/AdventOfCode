@@ -26,7 +26,8 @@ def valid(result):
     return(r <= 12 and g <= 13 and b <= 14)
 
 def getgame(s):
-    return s[-1]
+    _, label = s.split(" ")
+    return label
 
 def digest(draws):
     r, g, b = 0, 0 , 0
