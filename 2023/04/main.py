@@ -17,17 +17,21 @@ def main():
     for line in args.input:
         card, nums = line.split(":")
         wlist, plist = nums.strip().split("|")
-        winners= wlist.strip().split(" ")
-        picks = plist.strip().split(" ")
+        winners= dedup(wlist.strip().split(" "))
+        picks = dedup(plist.strip().split(" "))
         s = score(winners, picks)
         print(s)
         totalscore += s
     print(totalscore, file=args.output)
 
+def dedup(l):
+    return list(set(x for x in l if x != ""))
+
 def score(wins, picks):
+    wset = set(wins)
     s = 0
     for p in picks:
-        if p in wins:
+        if p in wset:
             if s == 0:
                 s = 1
             else:
