@@ -14,12 +14,20 @@ def main():
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
     idsum = 0
+    power = 0
     for line in args.input:
         game, pulls = line.split(":")
-        if valid(maximum(pulls)):
-            print(getgame(game), maximum(pulls), pulls, file=args.output)
+        m = maximum(pulls)
+        power += powermax(m)
+        if valid(m):
+            print(getgame(game), m, powermax(m), pulls, file=args.output)
             idsum += int(getgame(game))
     print(idsum, file=args.output)
+    print(power, file=args.output)
+
+def powermax(result):
+    r, g, b = result["r"], result["g"], result["b"]
+    return r*g*b
 
 def valid(result):
     r, g, b = result["r"], result["g"], result["b"]
