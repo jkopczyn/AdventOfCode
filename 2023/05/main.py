@@ -43,6 +43,22 @@ def main():
         elif step == 7:
             loclines.append(line)
 
+    cleanseedline = seedslines[0].split(":")[-1]
+    seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
+
+    initial = list(range(max(seeds)+1))
+    mutated = list(range(max(seeds)+1))
+    for transition in [soillines, fertilizerlines, waterlines, lightlines, templines, humidlines, loclines]:
+        mutated = mutate(mutated, clean(transition))
+    for seed in seeds:
+        print(seed, mutated[seed])
+
+def mutate(lst, inputs):
+    return lst
+
+def clean(lines):
+    return lines
+
 if __name__ == "__main__":
     main()
 
