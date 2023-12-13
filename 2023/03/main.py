@@ -30,12 +30,32 @@ def main():
     print("", file=args.output)
 
 def select(grid, x, y):
+    parts = []
     # look above
+    if y>0:
+        pass
     # look left
+    if x>0 and isnum(grid[y][x-1]):
+        num, left, right = bounds(grid[y], x-1)
+        clear(grid, y, left, right)
+        parts.append(num)
     # look right
+    if x<(len(grid[0])-1) and isnum(grid[y][x+1]):
+        num, left, right = bounds(grid[y], x+1)
+        clear(grid, y, left, right)
+        parts.append(num)
     # look below
+    if y<(len(grid)-1):
+        pass
     return grid, []
- 
+
+def isnum(c):
+    return (c in "0123456789")
+
+def clear(grid, row, left, right):
+    for idx in range(left, right+1):
+        grid[row][idx] = "."
+
 
 if __name__ == "__main__":
     main()
