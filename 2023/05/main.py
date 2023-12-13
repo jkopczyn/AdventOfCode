@@ -54,10 +54,29 @@ def main():
         print(seed, mutated[seed])
 
 def mutate(lst, inputs):
+    for inp in inputs:
+        lst = singlemutate(lst, inp)
+    print(lst)
+    return lst
+
+def singlemutate(lst, triple):
+    dest, src, length = triple
+    targetrange = range(src, src+length)
+    diff = dest - src
+    for idx in range(len(lst)):
+        if lst[idx] in targetrange:
+            lst[idx] += diff
     return lst
 
 def clean(lines):
-    return lines
+    triples = []
+    for l in lines:
+        if "map" in l:
+            continue
+        a, b, c = (int(x.strip()) for x in l.split(" "))
+        triples.append((a,b,c))
+    print(triples)
+    return triples
 
 if __name__ == "__main__":
     main()
