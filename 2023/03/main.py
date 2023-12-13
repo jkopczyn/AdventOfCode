@@ -27,7 +27,8 @@ def main():
                 for part in parts:
                     totalpart += part
                 grid = newgrid
-    print("", file=args.output)
+    print(grid)
+    print(totalpart, file=args.output)
 
 def select(grid, x, y):
     parts = []
@@ -47,7 +48,7 @@ def select(grid, x, y):
     # look below
     if y<(len(grid)-1):
         pass
-    return grid, []
+    return grid, parts
 
 def isnum(c):
     return (c in "0123456789")
@@ -56,6 +57,21 @@ def clear(grid, row, left, right):
     for idx in range(left, right+1):
         grid[row][idx] = "."
 
+def bounds(row, point):
+    left = point
+    right = point
+    for idx in range(point, -1, -1):
+        if isnum(row[idx]):
+            left = idx
+            continue
+        break
+    for idx in range(point, len(row)):
+        if isnum(row[idx]):
+            right = idx
+            continue
+        break
+    num = int("".join(row[left:right+1]))
+    return num, left, right
 
 if __name__ == "__main__":
     main()
