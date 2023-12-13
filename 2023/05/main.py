@@ -54,19 +54,29 @@ def main():
         print(seed, mutated[seed])
 
 def mutate(lst, inputs):
+    newlist = list(-1 for x in lst)
     for inp in inputs:
-        lst = singlemutate(lst, inp)
-    print(lst)
-    return lst
+        newlist = singlemutate(lst, newlist, inp)
+    newlist = infill(lst, newlist)
+    print(newlist)
+    return newlist
 
-def singlemutate(lst, triple):
+def singlemutate(srclist, destlist, triple):
     dest, src, length = triple
     targetrange = range(src, src+length)
     diff = dest - src
-    for idx in range(len(lst)):
-        if lst[idx] in targetrange:
-            lst[idx] += diff
-    return lst
+    for idx in range(len(srclist)):
+        if srclist[idx] in targetrange:
+            if destlist[idx] != -1:
+                raise(Exception(idx))
+            destlist[idx] = srclist[idx] + diff
+    return destlist
+
+def infill(srclist, destlist):
+    for idx in range(len(srclist)):
+        if destlist[idx] == -1:
+            destlist[idx] = srclist[idx]
+    return destlist
 
 def clean(lines):
     triples = []
