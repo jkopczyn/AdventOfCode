@@ -49,7 +49,13 @@ def select(grid, x, y):
         grid, parts = look(grid, y, x+1, parts)
     # look below
     if y<(len(grid)-1):
-        pass
+        if isnum(grid[y+1][x]):
+            grid, parts = look(grid, y+1, x, parts)
+        else:
+            if x>0 and isnum(grid[y+1][x-1]):
+                grid, parts = look(grid, y+1, x-1, parts)
+            if x<(len(grid[0])-1) and isnum(grid[y+1][x+1]):
+                grid, parts = look(grid, y+1, x+1, parts)
     return grid, parts
 
 def look(grid, y, x, parts):
