@@ -24,7 +24,7 @@ def main():
 
 def differences(lst):
     lasts = [lst[-1]]
-    firsts = [-1*lst[0]]
+    firsts = [lst[0]]
     layer = lst
     while not matching(layer):
         left = layer[0]
@@ -36,7 +36,14 @@ def differences(lst):
         firsts.append(layer[0])
         lasts.append(layer[-1])
     # print(lasts)
-    return (-1*sum(firsts), sum(lasts))
+    return (reconstruct(firsts), sum(lasts))
+
+def reconstruct(lst):
+    start = lst[-1]
+    nxt = start
+    for x in list(reversed(lst))[1:]:
+        nxt = x - nxt
+    return nxt
 
 def matching(lst):
     first = lst[0]
