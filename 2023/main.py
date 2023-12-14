@@ -13,6 +13,9 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
+    initial = args.input.readline().strip()
+    dropline = args.input.readline()
+    print(initial, "initial")
     for line in args.input:
         print(line.strip(), file=args.output)
  
