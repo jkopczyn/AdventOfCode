@@ -39,7 +39,10 @@ def score_hand(chars):
             cards[c] = 1
     counts = sorted(cards.values(), reverse=True)
     first = counts[0]
-    second = counts[1]
+    if len(counts) > 1:
+        second = counts[1]
+    else:
+        second = 0
     if first == 1:
         score = 0
     elif first == 2 and second == 1:
