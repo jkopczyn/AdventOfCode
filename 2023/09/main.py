@@ -13,11 +13,13 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
-    initial = args.input.readline().strip()
-    dropline = args.input.readline()
-    print(initial, "initial")
+    total = 0
     for line in args.input:
-        print(line.strip(), file=args.output)
+        lst = list(int(x.strip()) for x in line.split(" "))
+        sm = differences(lst)
+        total += sm
+        print(sm)
+    print(total, file=args.output)
 
 def differences(lst):
     lasts = [lst[-1]]
@@ -30,7 +32,8 @@ def differences(lst):
             left = right
         layer = new_layer
         lasts.append(layer[-1])
-
+    # print(lasts)
+    return sum(lasts)
 
 def matching(lst):
     first = lst[0]
