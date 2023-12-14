@@ -13,8 +13,22 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
+    bids = {'': 0}
+    scores = {'': 0}
     for line in args.input:
-        print(line, score_hand(line.split(" ")[0]), file=args.output)
+        hand, bid = line.split(" ")
+        bids[hand] = int(bid)
+        scores[hand] = score_hand(hand)
+    ranks = list(sorted(scores.items(), key=lambda x: x[1]))
+    print(ranks)
+    result = 0
+    for idx in range(len(ranks)):
+        print(ranks[idx])
+        hand = ranks[idx][0]
+        bid = bids[hand]
+        print(bid, idx, idx*bid)
+        result += idx*bid
+    print(result, file=args.output)
 
 def score_hand(chars):
     cards = {}
@@ -57,6 +71,8 @@ def tiebreaker(chars):
             s += "12"
         elif c == "K":
             s += "13"
+        elif c == "A":
+            s += "14"
     return int(s)
 
 if __name__ == "__main__":
