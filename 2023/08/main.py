@@ -23,19 +23,34 @@ def main():
         left, right = (x.strip() for x in directions.strip("() ").split(","))
         lefts[key] = left
         rights[key] = right
-    location = "AAA"
+    locations = starts(lefts)
     steps = 0
-    while location != "ZZZ":
+    while not done(locations):
         step = moves[(steps % len(moves))]
         steps += 1
-        if step == "L":
-            location = lefts[location]
-        elif step == "R":
-            location = rights[location]
-        else:
-            raise Exception(step, "is an invalid step")
+        newlocs = []
+        for location in locations:
+            if step == "L":
+                newlocs.append(lefts[location])
+            elif step == "R":
+                newlocs.append(rights[location])
+            else:
+                raise Exception(step, "is an invalid step")
+        locations = newlocs
     print(steps)
- 
+
+def starts(paths):
+    s = []
+    for k, _ in paths.items():
+        if k[-1] == "A":
+            s.append(k)
+    return s
+
+def done(locations):
+    for loc in locations:
+        if loc[-1] != "Z":
+            return False
+    return True
 
 if __name__ == "__main__":
     main()
