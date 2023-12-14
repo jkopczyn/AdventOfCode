@@ -37,8 +37,12 @@ def score_hand(chars):
             cards[c] += 1
         else:
             cards[c] = 1
+    jokers = cards.get("J", 0)
+    if jokers > 0:
+        del cards["J"]
     counts = sorted(cards.values(), reverse=True)
     first = counts[0]
+    first += jokers
     if len(counts) > 1:
         second = counts[1]
     else:
@@ -69,13 +73,15 @@ def tiebreaker(chars):
         elif c == "T":
             s += "10"
         elif c == "J":
-            s += "11"
+            s += "00"
         elif c == "Q":
             s += "12"
         elif c == "K":
             s += "13"
         elif c == "A":
             s += "14"
+        else:
+            raise Exception(chars +"invalid score")
     return int(s)
 
 if __name__ == "__main__":
