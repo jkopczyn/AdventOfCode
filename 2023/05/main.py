@@ -44,6 +44,7 @@ def main():
             loclines.append(line)
 
     cleanseedsline = seedslines[0].split(":")[-1]
+    print(cleanseedsline)
     # seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
     seeds = seedranges(cleanseedsline)
 
@@ -56,16 +57,18 @@ def main():
     print(min(mutated))
 
 def seedranges(seedsline):
-    seeds = []
+    seeds = {}
     start = -1
     nums = list(int(s) for s in seedsline.split(" ") if s.strip() != "")
     for n in nums:
         if start == -1:
             start = n
         else:
-            seeds.extend(range(start, start+n))
+            for x in range(start, start+n):
+                seeds[x] = True
             start = -1
-    return list(sorted(seeds))
+    print(len(seeds))
+    return seeds
 
 
 def mutate(lst, inputs):
