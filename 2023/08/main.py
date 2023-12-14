@@ -16,8 +16,25 @@ def main():
     moves = args.input.readline().strip()
     _ = args.input.readline()
     print(moves, "moves")
+    lefts = {}
+    rights = {}
     for line in args.input:
-        print(line.strip(), file=args.output)
+        key, directions = (x.strip() for x in line.split("="))
+        left, right = (x.strip() for x in directions.strip("() ").split(","))
+        lefts[key] = left
+        rights[key] = right
+    location = "AAA"
+    steps = 0
+    while location != "ZZZ":
+        step = moves[(steps % len(moves))]
+        steps += 1
+        if step == "L":
+            location = lefts[location]
+        elif step == "R":
+            location = rights[location]
+        else:
+            raise Exception(step, "is an invalid step")
+    print(steps)
  
 
 if __name__ == "__main__":
