@@ -41,7 +41,10 @@ def score_hand(chars):
     if jokers > 0:
         del cards["J"]
     counts = sorted(cards.values(), reverse=True)
-    first = counts[0]
+    if len(counts) > 0:
+        first = counts[0]
+    else:
+        first = 0
     first += jokers
     if len(counts) > 1:
         second = counts[1]
