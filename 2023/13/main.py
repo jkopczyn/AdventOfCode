@@ -14,7 +14,6 @@ def main():
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
 
-    score = 0
     patterns = []
     pattern = []
     for line in args.input:
@@ -25,6 +24,7 @@ def main():
         pattern.append(line.strip())
     patterns.append(pattern)
 
+    score = 0
     for pattern in patterns:
         row_splits = []
         print("rows")
