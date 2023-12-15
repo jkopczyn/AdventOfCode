@@ -25,20 +25,27 @@ def main():
     patterns.append(pattern)
 
     score = 0
+    smudge_score = 0
     for pattern in patterns:
         row_splits = []
         print("rows")
         for row in pattern:
             row_splits.append(set(line_mirrored_splits(row)))
-        good_row = set.intersection(*row_splits)
-        print(good_row, file=args.output)
+        good_row = normal_intersect(row_splits)
+        smudge_row = smudge_intersect(row_splits)
+        print(good_row, smudge_row, file=args.output)
         col_splits = []
         print("columns")
         for idx in range(len(row)):
             col = list(r[idx] for r in pattern)
             col_splits.append(set(line_mirrored_splits(col)))
-        good_col = set.intersection(*col_splits)
-        print(good_col, file=args.output)
+        good_col = normal_intersect(col_splits)
+        smudge_col = smudge_intersect(col_splits)
+        print(good_col, smudge_col, file=args.output)
+        for c in smudge_col:
+            smudge_score += 100*c
+        for r in smudge_row:
+            smudge_score += r
         for c in good_col:
             score += 100*c
         for r in good_row:
@@ -47,7 +54,20 @@ def main():
             print(row_splits, col_splits)
             print(pattern)
             raise Exception("no lines of reflection")
-    print(score, file=args.output)
+    print(score, smudge_score, file=args.output)
+
+def normal_intersect(sets):
+    return set.intersection(*sets)
+
+def smudge_intersect(sets):
+    all_but_ones = list(
+            list(sets[i] for i in range(len(sets)) if i != j)
+            for j in range(len(sets))
+            )
+    all_but_intersects = list(set.intersection(*ss) for ss in all_but_ones)
+    smudge_line = set.union(*all_but_intersects) - normal_intersect(sets)
+    print(all_but_intersects, smudge_line)
+    return smudge_line
 
 def line_mirrored_splits(line):
     splits = []
