@@ -44,6 +44,14 @@ def main():
 
     new_galaxies = list((xs_old_to_new[g[0]], ys_old_to_new[g[1]]) for g in galaxies)
     print(new_galaxies, file=args.output)
+    total_distance = 0
+    for idx in range(len(new_galaxies)):
+        g = new_galaxies[idx]
+        for jdx in range(idx+1, len(new_galaxies)):
+            h = new_galaxies[jdx]
+            distance = abs(g[0]-h[0])+abs(g[1]-h[1])
+            total_distance += distance
+    print(total_distance, file=args.output)
  
 
 if __name__ == "__main__":
