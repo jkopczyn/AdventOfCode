@@ -24,13 +24,17 @@ def main():
     patterns.append(pattern)
 
     for pattern in patterns:
+        row_splits = []
         print("rows")
         for row in pattern:
-            print(line_mirrored_splits(row))
+            row_splits.append(set(line_mirrored_splits(row)))
+        print(set.intersection(*row_splits), file=args.output)
+        col_splits = []
         print("columns")
         for idx in range(len(row)):
             col = list(r[idx] for r in pattern)
-            print(line_mirrored_splits(col))
+            col_splits.append(set(line_mirrored_splits(col)))
+        print(set.intersection(*col_splits), file=args.output)
     print("", file=args.output)
 
 def line_mirrored_splits(line):
