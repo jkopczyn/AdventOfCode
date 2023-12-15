@@ -33,17 +33,17 @@ def main():
     extra_xs = [0]*len(xs)
     for x in blank_xs:
         for idx in range(x,len(xs)):
-            extra_xs[idx] += 1
+            extra_xs[idx] += (1000000 - 1)
     xs_old_to_new = list(idx + extra_xs[idx] for idx in range(len(xs)))
 
     extra_ys = [0]*len(ys)
     for y in blank_ys:
         for idx in range(y,len(ys)):
-            extra_ys[idx] += 1
+            extra_ys[idx] += (1000000 - 1)
     ys_old_to_new = list(idx + extra_ys[idx] for idx in range(len(ys)))
 
     new_galaxies = list((xs_old_to_new[g[0]], ys_old_to_new[g[1]]) for g in galaxies)
-    print(new_galaxies, file=args.output)
+    # print(new_galaxies, file=args.output)
     total_distance = 0
     for idx in range(len(new_galaxies)):
         g = new_galaxies[idx]
