@@ -43,11 +43,15 @@ def main():
             score += 100*c
         for r in good_row:
             score += r
+        if not good_col and not good_row:
+            print(row_splits, col_splits)
+            print(pattern)
+            raise Exception("no lines of reflection")
     print(score, file=args.output)
 
 def line_mirrored_splits(line):
     splits = []
-    for split in range(1,len(line)-1):
+    for split in range(1,len(line)):
         step = 1
         mirrored = True
         while step <= split and split+step <= len(line):
