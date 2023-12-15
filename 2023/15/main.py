@@ -14,11 +14,19 @@ def main():
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
     initial = args.input.readline().strip()
-    dropline = args.input.readline()
-    print(initial, "initial")
-    for line in args.input:
-        print(line.strip(), file=args.output)
- 
+    commands = initial.split(",")
+    total = 0
+    for comm in commands:
+        print(comm, xhash(comm), file=args.output)
+        total += xhash(comm)
+    print(total,  file=args.output)
+
+def xhash(string):
+    n = 0
+    for c in string:
+        n += ord(c)
+        n = (n*17)%256
+    return n
 
 if __name__ == "__main__":
     main()
