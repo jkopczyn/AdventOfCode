@@ -13,12 +13,23 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
-    initial = args.input.readline().strip()
-    dropline = args.input.readline()
-    print(initial, "initial")
     for line in args.input:
-        print(line.strip(), file=args.output)
- 
+        print(line_mirrored_splits(line.strip()), file=args.output)
+
+def line_mirrored_splits(line):
+    splits = []
+    for split in range(1,len(line)-1):
+        step = 1
+        mirrored = True
+        while step <= split and split+step <= len(line):
+            if line[split-step] != line[split+step-1]:
+                mirrored = False
+                break
+            step += 1
+        if mirrored:
+            splits.append(split)
+    return splits
+
 
 if __name__ == "__main__":
     main()
