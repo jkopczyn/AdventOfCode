@@ -16,10 +16,44 @@ def main():
     initial = args.input.readline().strip()
     commands = initial.split(",")
     total = 0
+    boxes = [list() for _ in range(256)]
     for comm in commands:
-        print(comm, xhash(comm), file=args.output)
-        total += xhash(comm)
-    print(total,  file=args.output)
+        if "-" in comm:
+            label, _ = comm.split("-")
+            remove(boxes, xhash(label), label)
+        elif "=" in comm:
+            label, num = comm.split("=")
+            if contains(boxes, xhash(label), label):
+                mutate(boxes, xhash(label), label, num)
+            else:
+                add(boxes, xhash(label), label, num)
+    for b in boxes:
+        if len(b) > 0:
+            print(b, file=args.output)
+
+def remove(boxes, position, label):
+    for idx in range(len(boxes[position])):
+        l, _ = boxes[position][idx]
+        if l == label:
+            boxes[position] = boxes[position][:idx] + boxes[position][idx+1:]
+            return
+
+def mutate(boxes, position, label, num):
+    for idx in range(len(boxes[position])):
+        l, _ = boxes[position][idx]
+        if l == label:
+            boxes[position][idx] = (label, num)
+            return
+
+def contains(boxes, position, label):
+    for l, n in boxes[position]:
+        if l == label:
+            return True
+    return False
+
+def add(boxes, position, label, num):
+    boxes[position].append((label, num))
+
 
 def xhash(string):
     n = 0
