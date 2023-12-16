@@ -27,9 +27,22 @@ def main():
                 mutate(boxes, xhash(label), label, num)
             else:
                 add(boxes, xhash(label), label, num)
-    for b in boxes:
+    total_power = 0
+    for idx in range(len(boxes)):
+        b = boxes[idx]
         if len(b) > 0:
-            print(b, file=args.output)
+            this_power = focusing_power(boxes, idx)
+            total_power += this_power
+            print(b, this_power, file=args.output)
+    print(total_power, file=args.output)
+
+
+def focusing_power(boxes, idx):
+    power = 0
+    for jdx in range(len(boxes[idx])):
+        lens = int(boxes[idx][jdx][1])
+        power += (jdx+1)*lens
+    return power*(idx+1)
 
 def remove(boxes, position, label):
     for idx in range(len(boxes[position])):
