@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 import sys
 import argparse
+import itertools
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -13,9 +14,10 @@ def main():
             metavar="OUTPUT_FILE", type=argparse.FileType("w"),
             help="path to the output file (write to stdout if omitted)")
     args = parser.parse_args()
+    # testinput is 10x12
+    # grid = [['.' for _ in range(13)] for _ in range(12)]
     # total Rs in input ~900, total Ds ~900
-    grid = [['.' for _ in range(12)] for _ in range(12)]
-    # grid = [['.' for _ in range(900)] for _ in range(900)]
+    grid = [['.' for _ in range(900)] for _ in range(900)]
     coords = (1,1) # padding with empty row and col helps
     for line in args.input:
         direction, distance, color = line.strip().split(" ")
@@ -51,15 +53,33 @@ def dig(grid, coords, direction, distance):
 def fill(grid):
     # grid is padded with 1 empty row and col
     for y in range(1, len(grid)):
-        for x in range(1, len(grid[y])):
-            if grid[y][x] == '#':
+        row = grid[y]
+        runs = row_to_runs(row)
+        for run in runs:
+            start, end, char = run
+            if char == '#':
                 continue
-            left = grid[y][x-1]
-            up = grid[y-1][x]
-            if left == '#':
-                grid[y][x] = up
+            above = grid[y-1][start:end+1]
+            if all(c == '#' for c in above):
+                for idx in range(start, end+1):
+                    row[idx] = '#'
     return grid
 
+def row_to_runs(row):
+    runs = []
+    idx = 0
+    while idx < len(row)-1:
+        row, idx, run = grab_run(row, idx)
+        print(row, idx, run)
+        runs.append(run)
+    print(runs)
+    return runs
+
+def grab_run(row, idx):
+    char = row[idx]
+    run = list(itertools.takewhile(lambda c: c == char, row[idx:]))
+    run_spec = (idx, idx+len(run)-1, char)
+    return (row, idx+len(run), run_spec)
 
 if __name__ == "__main__":
     main()
