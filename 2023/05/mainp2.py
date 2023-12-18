@@ -23,7 +23,8 @@ def main():
     loclines = []
     step = 0
     for line in args.input:
-        if line.strip() == "":
+        line = line.strip()
+        if line == "":
             step += 1
             continue
         if step == 0:
@@ -47,9 +48,10 @@ def main():
     print(cleanseedsline)
     # seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
     seeds = seedranges(cleanseedsline)
-    mutated = list(s for s in seeds)
+    mutated = [s for s in seeds]
 
     for transition in [soillines, fertilizerlines, waterlines, lightlines, templines, humidlines, loclines]:
+        # print(mutated, transition)
         mutated = mutate(mutated, clean(transition))
     for idx in range(len(seeds)):
         print(seeds[idx], mutated[idx])
@@ -65,7 +67,7 @@ def seedranges(seedsline):
         else:
             seeds.append((start, start+n-1))
             start = -1
-    print(len(seeds))
+    # print(len(seeds))
     return seeds
 
 
@@ -74,25 +76,45 @@ def mutate(lst, inputs):
     newlist = []
     for inp in inputs:
         oldlist, newlist = singlemutate(oldlist, newlist, inp)
-    newlist = infill(lst, newlist)
+    newlist = infill(oldlist, newlist)
     # print(newlist)
     return newlist
 
 def singlemutate(srclist, destlist, triple):
     dest, src, length = triple
-    targetrange = range(src, src+length)
+    targetrange = (src, src+length-1)
     diff = dest - src
-    for idx in range(len(srclist)):
-        if srclist[idx] in targetrange:
-            if destlist[idx] != -1:
-                raise(Exception(idx))
-            destlist[idx] = srclist[idx] + diff
-    return destlist
+    mutated_srclist = []
+    for oldrange in srclist:
+        olds, news = intersect(oldrange, targetrange, diff)
+        mutated_srclist.extend(olds)
+        destlist.extend(news)
+    return mutated_srclist, destlist
+
+def intersect(oldrange, targetrange, diff):
+    a,b = oldrange
+    c,d = targetrange
+    if b < c or d < a:
+        return [oldrange], []
+    olds, news  = [], []
+    if a < c:
+        olds.append((a,c-1))
+    if d < b:
+        olds.append((d+1, b))
+    if a <= c and c <= b:
+        if d < b:
+            news.append((c+diff, d+diff))
+        else:
+            news.append((c+diff, b+diff))
+    if c <= a:
+        if d < b:
+            news.append((a+diff, d+diff))
+        else:
+            news.append((a+diff, b+diff))
+    return olds, news
 
 def infill(srclist, destlist):
-    for idx in range(len(srclist)):
-        if destlist[idx] == -1:
-            destlist[idx] = srclist[idx]
+    destlist.extend(srclist)
     return destlist
 
 def clean(lines):
