@@ -16,11 +16,15 @@ def main():
     # total Rs in input ~900, total Ds ~900
     grid = [['.' for _ in range(12)] for _ in range(12)]
     # grid = [['.' for _ in range(900)] for _ in range(900)]
-    coords = (0,0)
+    coords = (1,1)
     for line in args.input:
         direction, distance, color = line.strip().split(" ")
         distance = int(distance)
         grid, coords = dig(grid, coords, direction, distance)
+    for row in grid:
+        print(''.join(row), file=args.output)
+    print(sum([len([x for x in row if x == '#']) for row in grid]))
+    grid = fill(grid)
     for row in grid:
         print(''.join(row), file=args.output)
     print(sum([len([x for x in row if x == '#']) for row in grid]))
@@ -43,6 +47,29 @@ def dig(grid, coords, direction, distance):
         for newx in range(x-1, x-distance-1, -1):
             grid[y][newx] = "#"
         return grid, (x-distance, y)
+
+def fill(grid):
+    for idx in range(len(grid)):
+        row = grid[idx]
+        parity = 0
+        last_seen = '.'
+        new_row = []
+        for el in row:
+            if el == '#':
+                parity = int(not parity)
+                new_row.append('#')
+                if last_seen == '#':
+                    parity = 0
+                last_seen = '#'
+                continue
+            if parity == 1:
+                new_row.append('#')
+            else:
+                new_row.append('.')
+            last_seen = '.'
+        grid[idx] = new_row
+    return grid
+
 
 if __name__ == "__main__":
     main()
