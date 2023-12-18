@@ -47,9 +47,8 @@ def main():
     print(cleanseedsline)
     # seeds = list(sorted(int(s) for s in cleanseedline.split(" ") if s.strip() != ""))
     seeds = seedranges(cleanseedsline)
-
-    initial = list(s for s in seeds)
     mutated = list(s for s in seeds)
+
     for transition in [soillines, fertilizerlines, waterlines, lightlines, templines, humidlines, loclines]:
         mutated = mutate(mutated, clean(transition))
     for idx in range(len(seeds)):
@@ -57,24 +56,24 @@ def main():
     print(min(mutated))
 
 def seedranges(seedsline):
-    seeds = {}
+    seeds = []
     start = -1
     nums = list(int(s) for s in seedsline.split(" ") if s.strip() != "")
     for n in nums:
         if start == -1:
             start = n
         else:
-            for x in range(start, start+n):
-                seeds[x] = True
+            seeds.append((start, start+n-1))
             start = -1
     print(len(seeds))
     return seeds
 
 
 def mutate(lst, inputs):
-    newlist = list(-1 for x in lst)
+    oldlist = [x for x in lst]
+    newlist = []
     for inp in inputs:
-        newlist = singlemutate(lst, newlist, inp)
+        oldlist, newlist = singlemutate(oldlist, newlist, inp)
     newlist = infill(lst, newlist)
     # print(newlist)
     return newlist
