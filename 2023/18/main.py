@@ -16,7 +16,7 @@ def main():
     # total Rs in input ~900, total Ds ~900
     grid = [['.' for _ in range(12)] for _ in range(12)]
     # grid = [['.' for _ in range(900)] for _ in range(900)]
-    coords = (1,1)
+    coords = (1,1) # padding with empty row and col helps
     for line in args.input:
         direction, distance, color = line.strip().split(" ")
         distance = int(distance)
@@ -49,23 +49,15 @@ def dig(grid, coords, direction, distance):
         return grid, (x-distance, y)
 
 def fill(grid):
-    for idx in range(len(grid)):
-        row = grid[idx]
-        parity = 0
-        last_seen = '.'
-        segments = ''.join(row).split('#')
-        new_segments = []
-        for segment in segments:
-            if segment == '':
-                new_segments.append('')
+    # grid is padded with 1 empty row and col
+    for y in range(1, len(grid)):
+        for x in range(1, len(grid[y])):
+            if grid[y][x] == '#':
                 continue
-            if parity == 0:
-                new_segments.append(segment)
-            else:
-                new_seg = ''.join(list('#' for x in segment))
-                new_segments.append(new_seg)
-            parity = int(not parity)
-        grid[idx] = '#'.join(new_segments)
+            left = grid[y][x-1]
+            up = grid[y-1][x]
+            if left == '#':
+                grid[y][x] = up
     return grid
 
 
