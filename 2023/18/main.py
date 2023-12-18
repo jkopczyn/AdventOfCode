@@ -53,21 +53,19 @@ def fill(grid):
         row = grid[idx]
         parity = 0
         last_seen = '.'
-        new_row = []
-        for el in row:
-            if el == '#':
-                parity = int(not parity)
-                new_row.append('#')
-                if last_seen == '#':
-                    parity = 0
-                last_seen = '#'
+        segments = ''.join(row).split('#')
+        new_segments = []
+        for segment in segments:
+            if segment == '':
+                new_segments.append('')
                 continue
-            if parity == 1:
-                new_row.append('#')
+            if parity == 0:
+                new_segments.append(segment)
             else:
-                new_row.append('.')
-            last_seen = '.'
-        grid[idx] = new_row
+                new_seg = ''.join(list('#' for x in segment))
+                new_segments.append(new_seg)
+            parity = int(not parity)
+        grid[idx] = '#'.join(new_segments)
     return grid
 
 
