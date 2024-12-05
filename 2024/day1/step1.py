@@ -6,11 +6,11 @@ def read_input(filename):
             numbers.append([int(x) for x in line.strip().split()])
     return numbers
 
-pairs = read_input("testinput.txt")
+pairs = read_input("input.txt")
 
 xs = sorted([x for x, y in pairs])
 ys = sorted([y for x, y in pairs])
 
 diffs = [abs(xs[i] - ys[i]) for i in range(len(xs))]
-print(diffs)
+# print(diffs)
 print(sum(diffs))
