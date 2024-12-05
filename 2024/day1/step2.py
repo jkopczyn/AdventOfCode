@@ -6,13 +6,13 @@ def read_input(filename):
             numbers.append([int(x) for x in line.strip().split()])
     return numbers
 
-pairs = read_input("testinput.txt")
+pairs = read_input("input.txt")
 
 count_map = {}
 for _, y in pairs:
     count_map[y] = count_map.get(y, 0) + 1
 
-print(count_map)
+# print(count_map)
 
 total = 0
 for x, _ in pairs:
