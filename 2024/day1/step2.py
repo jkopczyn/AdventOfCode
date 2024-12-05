@@ -14,3 +14,8 @@ for _, y in pairs:
 
 print(count_map)
 
+total = 0
+for x, _ in pairs:
+    total += count_map.get(x, 0)*x
+
+print(total)
